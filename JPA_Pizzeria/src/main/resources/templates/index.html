@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet"
+	data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<title>Inicio</title>
 </head>
 <body>
-    <h1>Hola mundo</h1>
+	<div class="container">
+		<div class="row">
+			<header data-th-replace="~{fragments/header::header}"></header>
+		</div>
+		<h1>Hola mundo</h1>
+		<footer data-th-replace="~{fragments/footer::footer}"></footer>
+	</div>
+<script data-th-src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
