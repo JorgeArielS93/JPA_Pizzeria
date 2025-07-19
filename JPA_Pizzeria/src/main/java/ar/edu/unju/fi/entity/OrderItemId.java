@@ -3,6 +3,7 @@ package ar.edu.unju.fi.entity;
 import java.io.Serializable;
 import java.util.Objects;
 
+import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
