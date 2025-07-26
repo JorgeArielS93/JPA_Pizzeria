@@ -1,5 +1,10 @@
 package ar.edu.unju.fi.entity;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,53 +17,41 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-//Indica que esta clase es una entidad JPA que se mapeará a una tabla de base de datos.
-
 @Table(name = "Pizza")
-//Especifica el nombre de la tabla en la base de datos que se usará para esta entidad.
-
 @Getter
 @Setter
-//Genera automáticamente los métodos getter y setter para todos los campos de la clase.
-
 @NoArgsConstructor
-//Genera un constructor sin argumentos.
-
 @AllArgsConstructor
-//Genera un constructor con un argumento para cada campo de la clase.
-
 public class PizzaEntity {
+
 	@Id
-	// Indica que el campo siguiente es la clave primaria de la entidad.
-
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	// Especifica que el valor del campo se generará automáticamente por la base de datos mediante la estrategia de identidad.
-
 	@Column(name = "id_Pizza", nullable = false)
-	// Mapea el campo a la columna "id_Pizza" en la tabla de base de datos y especifica que no puede ser nulo.
 	private Integer idPizza;
 	
+	@NotBlank(message = "El nombre no puede estar vacío")
+	@Size(min = 3, max = 30, message = "El nombre debe tener entre 3 y 30 caracteres")
 	@Column(nullable = false, length = 30, unique = true)
-	// Mapea el campo a una columna en la base de datos que no puede ser nula, tiene una longitud máxima de 30 caracteres y debe ser única.
 	private String name;
 	
+	@NotBlank(message = "La descripción es obligatoria")
+	@Size(min = 10, max = 150, message = "La descripción debe tener entre 10 y 150 caracteres")
 	@Column(nullable = false, length = 150)
-	// Mapea el campo a una columna en la base de datos que no puede ser nula y tiene una longitud máxima de 150 caracteres.
 	private String description;
 	
-	@Column(nullable = false, columnDefinition = "Decimal(5,2)")
-	// Mapea el campo a una columna en la base de datos que no puede ser nula y debe tener un tipo de dato Decimal con 5 dígitos en total y 2 decimales.
+	@NotNull(message = "El precio no puede ser nulo")
+	// Nota: DECIMAL(5,2) solo permite precios hasta 999.99. Si necesitas precios mayores, considera cambiarlo en la BD a DECIMAL(10,2).
+	@DecimalMin(value = "0.01", message = "El precio debe ser mayor que cero")
+	@Column(nullable = false, columnDefinition = "Decimal(10,2)")
 	private Double price;
 	
 	@Column(columnDefinition = "TINYINT")
-	// Mapea el campo a una columna en la base de datos con tipo de dato TINYINT.
 	private Boolean vegetarian;
 	
 	@Column(columnDefinition = "TINYINT")
-	// Mapea el campo a una columna en la base de datos con tipo de dato TINYINT.
 	private boolean vegan;
 	
+	@NotNull(message="Debes indicar si la pizza está disponible")
 	@Column(columnDefinition = "TINYINT", nullable = false)
-	// Mapea el campo a una columna en la base de datos con tipo de dato TINYINT que no puede ser nula.
 	private Boolean avaible;
 }

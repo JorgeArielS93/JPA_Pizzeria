@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+    <title>Formulario de Pizza</title>
+</head>
+<body>
+	<div class="container mt-4">
+		<header data-th-replace="~{fragments/header::header}"></header>
+		
+		<h2 th:text="${pizza.idPizza == null ? 'Nueva Pizza' : 'Editar Pizza'}">Formulario de Pizza</h2>
+		<hr/>
+
+		<form th:action="@{/pizzas/guardar}" th:object="${pizza}" method="post">
+		
+			<input type="hidden" th:field="*{idPizza}" />
+
+			<div class="mb-3">
+				<label for="name" class="form-label">Nombre de la Pizza</label>
+				<input type="text" id="name" class="form-control" th:field="*{name}" placeholder="Ej: Muzzarella">
+				<div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+			</div>
+
+			<div class="mb-3">
+				<label for="description" class="form-label">Descripción</label>
+				<textarea id="description" class="form-control" th:field="*{description}" rows="3" placeholder="Ingredientes y detalles"></textarea>
+				<div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+			</div>
+			
+			<div class="mb-3">
+				<label for="price" class="form-label">Precio</label>
+				<input type="number" id="price" class="form-control" th:field="*{price}" step="0.01" placeholder="Ej: 150.50">
+				<div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+			</div>
+
+			<div class="row mb-3">
+				<div class="col-md-4">
+					<div class="form-check form-switch">
+						<input class="form-check-input" type="checkbox" role="switch" id="vegetarian" th:field="*{vegetarian}">
+						<label class="form-check-label" for="vegetarian">¿Es Vegetariana?</label>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-check form-switch">
+						<input class="form-check-input" type="checkbox" role="switch" id="vegan" th:field="*{vegan}">
+						<label class="form-check-label" for="vegan">¿Es Vegana?</label>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-check form-switch">
+						<input class="form-check-input" type="checkbox" role="switch" id="avaible" th:field="*{avaible}">
+						<label class="form-check-label" for="avaible">¿Está Disponible?</label>
+						<div class="text-danger" th:if="${#fields.hasErrors('avaible')}" th:errors="*{avaible}"></div>
+					</div>
+				</div>
+			</div>
+			
+			<button type="submit" class="btn btn-primary">Guardar Pizza</button>
+			<a th:href="@{/pizzas/listado}" class="btn btn-secondary">Cancelar</a>
+		</form>
+
+		<footer data-th-replace="~{fragments/footer::footer}" class="mt-5"></footer>
+	</div>
+	
+	<script data-th-src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
