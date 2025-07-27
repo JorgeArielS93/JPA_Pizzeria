@@ -40,7 +40,6 @@ public class PizzaEntity {
 	private String description;
 	
 	@NotNull(message = "El precio no puede ser nulo")
-	// Nota: DECIMAL(5,2) solo permite precios hasta 999.99. Si necesitas precios mayores, considera cambiarlo en la BD a DECIMAL(10,2).
 	@DecimalMin(value = "0.01", message = "El precio debe ser mayor que cero")
 	@Column(nullable = false, columnDefinition = "Decimal(10,2)")
 	private Double price;

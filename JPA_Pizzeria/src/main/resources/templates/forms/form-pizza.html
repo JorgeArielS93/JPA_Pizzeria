@@ -31,7 +31,7 @@
 			
 			<div class="mb-3">
 				<label for="price" class="form-label">Precio</label>
-				<input type="number" id="price" class="form-control" th:field="*{price}" step="0.01" placeholder="Ej: 150.50">
+				<input type="number" id="price" class="form-control" th:field="*{price}" step="0.01" placeholder="Ej: 9500.50">
 				<div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
 			</div>
 
@@ -58,7 +58,7 @@
 			</div>
 			
 			<button type="submit" class="btn btn-primary">Guardar Pizza</button>
-			<a th:href="@{/pizzas/listado}" class="btn btn-secondary">Cancelar</a>
+			<a th:href="@{/pizzas/lista}" class="btn btn-secondary">Cancelar</a>
 		</form>
 
 		<footer data-th-replace="~{fragments/footer::footer}" class="mt-5"></footer>
