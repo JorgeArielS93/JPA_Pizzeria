@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<title>Lista de Pizzas</title>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<header data-th-replace="~{fragments/header::header}"></header>
+		</div>
+
+		<div class="row mb-3 align-items-center">
+            <div class="col-12 col-md-8 text-center text-md-start">
+				<h1 class="mb-0">Lista de Pizzas</h1>
+			</div>
+            <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
+				<a th:href="@{/pizzas/nuevo}" class="btn btn-success">Agregar Pizza</a>
+			</div>
+		</div>
+        <div class="table-responsive">
+			<table class="table table-striped align-middle">
+				<thead class="table-dark">
+					<tr>
+						<th>ID</th>
+						<th>Nombre</th>
+						<th>Descripción</th>
+						<th>Precio</th>
+						<th>Vegetariana</th>
+						<th>Vegana</th>
+						<th>Disponible</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="pizza : ${pizzas}">
+						<td th:text="${pizza.idPizza}"></td>
+						<td th:text="${pizza.name}"></td>
+						<td th:text="${pizza.description}"></td>
+						<td th:text="${pizza.price} + ' $'"></td>
+						<td th:text="${pizza.vegetarian} ? 'Sí' : 'No'"></td>
+						<td th:text="${pizza.vegan} ? 'Sí' : 'No'"></td>
+						<td th:text="${pizza.avaible} ? 'Sí' : 'No'"></td>
+						<td>
+							<div class="d-flex flex-column flex-md-row gap-2">
+								<a th:href="@{'/pizzas/editar/' + ${pizza.idPizza}}" class="btn btn-warning btn-sm flex-fill">Editar</a>
+								<button type="button" class="btn btn-danger btn-sm flex-fill" data-bs-toggle="modal" data-bs-target="#deleteModal" th:attrappend="data-pizza-id=${pizza.idPizza},data-pizza-name=${pizza.name}">Borrar</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="deleteModalLabel">Confirmar borrado</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+		        ¿Estás seguro de que deseas borrar la pizza <span id="pizzaName"></span>?
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+		        <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Borrar</a>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+		<footer data-th-replace="~{fragments/footer::footer}"></footer>
+	</div>
+<script data-th-src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script>
+  var deleteModal = document.getElementById('deleteModal');
+  deleteModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var pizzaId = button.getAttribute('data-pizza-id');
+    var pizzaName = button.getAttribute('data-pizza-name');
+    var pizzaNameSpan = document.getElementById('pizzaName');
+    var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    pizzaNameSpan.textContent = pizzaName;
+    confirmDeleteBtn.href = '/pizzas/borrar/' + pizzaId; // ¡Manteniendo tu ruta original!
+  });
+</script>
+</body>
+</html>

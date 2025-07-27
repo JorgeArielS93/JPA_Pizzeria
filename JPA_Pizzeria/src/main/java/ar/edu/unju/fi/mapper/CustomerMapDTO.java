@@ -15,7 +15,7 @@ public interface CustomerMapDTO {
 
     @Mapping(source = "idCustomer", target = "idCustomer")
     @Mapping(source = "name", target = "name")
-    @Mapping(source = "address", target = "address") // Asegúrate de que coincida con tu entidad, o considera cambiar a 'address'
+    @Mapping(source = "address", target = "address")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "phoneNumber", target = "phoneNumber")
     CustomerDTO toDto(CustomerEntity customerEntity);
