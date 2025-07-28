@@ -8,11 +8,56 @@
 <title>Inicio</title>
 </head>
 <body>
-	<div class="container">
-		<div class="row">
-			<header data-th-replace="~{fragments/header::header}"></header>
-		</div>
-		<h1>Hola mundo</h1>
+	<div class="container my-4">
+		<header data-th-replace="~{fragments/header::header}"></header>
+		<div class="card shadow-lg mt-4 mb-5 mx-auto" style="max-width: 700px;">
+            <div class="form-header">
+                <h4 class="mb-0 text-uppercase" th:text="${cliente.idCustomer == null ? 'REGISTRO DE NUEVO CLIENTE' : 'EDICIÓN DE CLIENTE'}"></h4>
+            </div>
+
+            <div class="card-body p-4">
+                <form th:action="@{/customers/guardar}" th:object="${cliente}" method="post">
+				    <input type="hidden" th:field="*{idCustomer}" th:if="${isEdit}" />
+				
+				    <div class="mb-3">
+				        <label for="dni" class="form-label">DNI</label>
+				        <input type="text" id="dni" class="form-control" 
+				               th:field="*{dni}" 
+				               placeholder="Ej: 12345678" >
+				        <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
+				    </div>
+				
+				    <div class="mb-3">
+				        <label for="name" class="form-label">Nombre y Apellido</label>
+				        <input type="text" id="name" class="form-control" th:field="*{name}" placeholder="Ej: Juan Gabriel">
+				        <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+				    </div>
+				
+				    <div class="mb-3">
+				        <label for="address" class="form-label">Dirección</label>
+				        <input type="text" id="address" class="form-control" th:field="*{address}" placeholder="Ej: Av. Siempre Viva 123">
+				        <div class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+				    </div>
+				
+				    <div class="mb-3">
+				        <label for="email" class="form-label">Email</label>
+				        <input type="email" id="email" class="form-control" th:field="*{email}" placeholder="Ej: juan@email.com">
+				        <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+				    </div>
+				
+				    <div class="mb-3">
+				        <label for="phoneNumber" class="form-label">Teléfono</label>
+				        <input type="text" id="phoneNumber" class="form-control" th:field="*{phoneNumber}" placeholder="Ej: +543884123456">
+				        <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+				    </div>
+				
+				    <div class="form-actions">
+				        <button type="submit" class="btn btn-success ">Guardar Cliente</button>
+				        <a th:href="@{/customers/lista}" class="btn btn-danger ">Cancelar</a>
+				    </div>
+				</form>
+            </div>
+        </div>
 		<footer data-th-replace="~{fragments/footer::footer}"></footer>
 	</div>
 <script data-th-src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>

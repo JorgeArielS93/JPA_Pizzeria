@@ -60,16 +60,21 @@ public class PizzaController {
                                BindingResult bindingResult,
                                Model model // Necesario para agregar atributos si hay errores
                                ) { // Nuevo parámetro
+    	boolean isEdit = pizza.getIdPizza() != null; // Verifica si es una edición o una nueva pizza
         if (bindingResult.hasErrors()) {
             log.warn("WARN - Error de validación al guardar pizza: {}", bindingResult.getAllErrors());
             // Si hay errores, volvemos a la misma vista del formulario y el 'Model' ya contiene el 'pizza' con errores
-            model.addAttribute("isEdit", pizza.getIdPizza() != null && pizza.getIdPizza() != 0);
+            model.addAttribute("isEdit", isEdit);
             return "forms/form-pizza";
         }
 
         pizzaService.save(pizza);
-        log.info("INFO - Pizza guardada con ID: {}", pizza.getIdPizza());
-       
+        
+        if (isEdit) {
+			log.info("INFO - Pizza con ID {} actualizada correctamente.", pizza.getIdPizza());
+		} else {
+			log.info("INFO - Nueva pizza creada con nombre: {}", pizza.getName());
+		}
         return "redirect:/pizzas/lista"; // Redirecciona usando el prefijo "redirect:"
     }
 

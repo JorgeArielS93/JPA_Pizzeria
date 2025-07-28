@@ -3,6 +3,8 @@ package ar.edu.unju.fi.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -30,8 +32,12 @@ public class CustomerEntity {
 	 * Clave primaria de la entidad.
 	 */
 	@Id // 🔑 Indica que este campo es la clave primaria (Primary Key) de la tabla.
-	@Column(name = "id_customer", nullable = false, length = 15) //Mapea este campo a la columna "id_customer". No puede ser nulo y su longitud máxima es de 15 caracteres.
-	private String idCustomer; // Identificador único para el cliente (ej. un DNI o CUIT).
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_customer", nullable = false)
+	private Integer idCustomer; // Identificador único del cliente. Se genera automáticamente por la base de datos.
+	
+	@Column(name = "dni_customer", nullable = false, length = 15, unique = true)
+	private String dni;
 
 	/**
 	 * Atributos de la entidad.
@@ -39,7 +45,7 @@ public class CustomerEntity {
 	@Column(nullable = false, length = 60) //Mapea al campo "name". No puede ser nulo y tiene una longitud máxima de 60 caracteres.
 	private String name; // Nombre completo del cliente.
 
-	@Column(length = 100) // 🔗 Mapea al campo "address" (probablemente debería ser "address"). La longitud máxima es de 100 caracteres.
+	@Column(length = 100) // 🔗 Mapea al campo "address". La longitud máxima es de 100 caracteres.
 	private String address; // Dirección del cliente.
 
 	@Column(nullable = false, length = 50, unique = true) //Mapea al campo "email". No puede ser nulo, tiene longitud máxima de 50 y su valor debe ser único en toda la tabla.

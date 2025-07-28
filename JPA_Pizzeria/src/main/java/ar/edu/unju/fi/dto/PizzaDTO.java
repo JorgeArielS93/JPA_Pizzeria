@@ -33,5 +33,5 @@ public class PizzaDTO {
     private boolean vegan;
     
     @NotNull(message="Debes indicar si la pizza está disponible")
-    private Boolean avaible;
+    private boolean avaible;
 }

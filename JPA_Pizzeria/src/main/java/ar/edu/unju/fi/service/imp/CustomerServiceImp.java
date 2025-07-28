@@ -29,10 +29,10 @@ public class CustomerServiceImp implements ICustomerService {
 	}
 
 	@Override
-	public CustomerDTO findById(String id) {
+	public CustomerDTO findById(Integer id) {
 		log.info("Buscando cliente con id: {}", id);
-		return customerRepository.findById(id).map(customerMapDTO::toDto) // Mapea la entidad a DTO si está presente
-				.orElse(null); // Devuelve null si no se encontró
+		return customerRepository.findById(id).map(customerMapDTO::toDto)
+				.orElse(null);
 	}
 
 	@Override
@@ -43,9 +43,17 @@ public class CustomerServiceImp implements ICustomerService {
 	}
 
 	@Override
-	public void deleteById(String id) {
+	public void deleteById(Integer id) {
 		log.info("Eliminando cliente con id: {}", id);
 		customerRepository.deleteById(id);
 	}
 
+	public boolean existsByDni(String dni) {
+		return customerRepository.existsByDni(dni);
+	}
+
+	public CustomerDTO findByDni(String dni) {
+		CustomerEntity entity = customerRepository.findByDni(dni);
+		return entity != null ? customerMapDTO.toDto(entity) : null;
+	}
 }
