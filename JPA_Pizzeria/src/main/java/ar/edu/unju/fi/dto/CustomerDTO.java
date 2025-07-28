@@ -14,7 +14,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerDTO {
-    private String idCustomer;
+    private Integer idCustomer; // autogenerado, oculto en el formulario
+
+    @NotBlank(message = "El DNI no puede estar vacío")
+    @Size(min = 7, max = 15, message = "El DNI debe tener entre 7 y 15 caracteres")
+    private String dni;
 
     @NotBlank(message = "El nombre no puede estar vacío")
     @Size(min = 3, max = 40, message = "El nombre debe tener entre 3 y 40 caracteres")

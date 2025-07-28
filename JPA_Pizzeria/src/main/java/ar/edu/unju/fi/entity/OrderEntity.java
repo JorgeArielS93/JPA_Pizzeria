@@ -9,8 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,9 +40,14 @@ public class OrderEntity {
 	@Column(name = "id_order", nullable = false) // Mapea el campo a la columna "id_order" y especifica que no puede ser nulo.
 	private Integer idOrder;
 	
-	@Column(name = "id_customer", nullable = false, length = 15) // Mapea el campo a la columna "id_customer", no nula y con longitud máxima de 15 caracteres.
-	private String idCustomer;
-	
+	/**
+	 * Relación Muchos a Uno con CustomerEntity.
+	 * Muchas órdenes (@ManyToOne) pueden estar asociadas a un único cliente.
+	 */
+	@ManyToOne
+	@JoinColumn(name = "id_customer", nullable = false)
+	private CustomerEntity customer;
+
 	@Column(nullable = false, columnDefinition = "DATETIME") // Mapea a una columna no nula con tipo de dato DATETIME en la BD.
 	private LocalDate date; // Fecha en que se realizó la orden.
 	
@@ -54,18 +59,6 @@ public class OrderEntity {
 	
 	@Column(name = "additional_notes", length = 200) // Mapea a la columna "additional_notes" con longitud máxima de 200 caracteres.
 	private String additionalNotes; // Notas adicionales para la orden.
-	
-	/**
-	 * Relación Uno a Uno con CustomerEntity.
-	 * Una orden (@OneToOne) pertenece a un único cliente.
-	 */
-	@OneToOne
-	// Define la columna de unión ('id_customer') para esta relación.
-	// referencedColumnName: especifica la columna en la tabla 'customer' a la que se une.
-	// insertable = false, updatable = false: La relación es de solo lectura desde la entidad Order.
-	// El ID del cliente se gestiona a través del campo 'idCustomer'.
-	@JoinColumn(name = "id_customer", referencedColumnName = "id_customer", insertable = false, updatable = false)
-	private CustomerEntity customer;
 	
 	/**
 	 * Relación Uno a Muchos con OrderItemEntity.

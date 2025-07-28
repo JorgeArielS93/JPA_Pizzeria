@@ -12,9 +12,77 @@
 		<div class="row">
 			<header data-th-replace="~{fragments/header::header}"></header>
 		</div>
-		<h1>Hola mundo</h1>
+		
+		<div class="row mb-3 align-items-center">
+            <div class="col-12 col-md-8 text-center text-md-start">
+				<h1 class="mb-0">Lista de Clientes</h1>
+			</div>
+            <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
+				<a th:href="@{/customers/nuevo}" class="btn btn-success">Agregar Cliente</a>
+			</div>
+		</div>
+        <div class="table-responsive">
+			<table class="table table-striped align-middle">
+				<thead class="table-dark">
+					<tr>
+						<th>DNI</th>
+						<th>Nombre</th>
+						<th>Dirección</th>
+						<th>Email</th>
+						<th>Teléfono</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="cliente : ${clientes}">
+						<td th:text="${cliente.dni}"></td>
+						<td th:text="${cliente.name}"></td>
+						<td th:text="${cliente.address}"></td>
+						<td th:text="${cliente.email}"></td>
+						<td th:text="${cliente.phoneNumber}"></td>
+						<td>
+							<div class="d-flex flex-column flex-md-row gap-2">
+								<a th:href="@{'/customers/editar/' + ${cliente.idCustomer}}" class="btn btn-warning btn-sm flex-fill">Editar</a>
+								<button type="button" class="btn btn-danger btn-sm flex-fill" data-bs-toggle="modal" data-bs-target="#deleteModal" th:attrappend="data-customer-id=${cliente.idCustomer},data-customer-name=${cliente.name}">Borrar</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="deleteModalLabel">Confirmar borrado</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+		        ¿Estás seguro de que deseas borrar al cliente <span id="clienteName"></span>?
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+		        <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Borrar</a>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
 		<footer data-th-replace="~{fragments/footer::footer}"></footer>
 	</div>
 <script data-th-src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script>
+  var deleteModal = document.getElementById('deleteModal');
+  deleteModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var customerId = button.getAttribute('data-customer-id');
+    var customerName = button.getAttribute('data-customer-name');
+    var customerNameSpan = document.getElementById('clienteName');
+    var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    customerNameSpan.textContent = customerName;
+    confirmDeleteBtn.href = '/customers/borrar/' + customerId;
+  });
+</script>
 </body>
 </html>

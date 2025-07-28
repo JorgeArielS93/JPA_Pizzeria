@@ -12,8 +12,8 @@ import ar.edu.unju.fi.entity.CustomerEntity;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CustomerMapDTO {
-
     @Mapping(source = "idCustomer", target = "idCustomer")
+    @Mapping(source = "dni", target = "dni")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "address", target = "address")
     @Mapping(source = "email", target = "email")

@@ -6,7 +6,9 @@ import ar.edu.unju.fi.dto.CustomerDTO;
 
 public interface ICustomerService {
 	List<CustomerDTO> findAll();
-	CustomerDTO findById(String id);
+	CustomerDTO findById(Integer id);
 	void save(CustomerDTO customer);
-	void deleteById(String id); 
+	void deleteById(Integer id);
+	public CustomerDTO findByDni(String dni);
+	public boolean existsByDni(String dni);
 }
