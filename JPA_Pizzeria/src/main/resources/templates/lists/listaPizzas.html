@@ -21,39 +21,46 @@
 				<a th:href="@{/pizzas/nuevo}" class="btn btn-success">Agregar Pizza</a>
 			</div>
 		</div>
-        <div class="table-responsive">
-			<table class="table table-striped align-middle">
-				<thead class="table-dark">
-					<tr>
-						<th>ID</th>
-						<th>Nombre</th>
-						<th>Descripción</th>
-						<th>Precio</th>
-						<th>Vegetariana</th>
-						<th>Vegana</th>
-						<th>Disponible</th>
-						<th>Acciones</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="pizza : ${pizzas}">
-						<td th:text="${pizza.idPizza}"></td>
-						<td th:text="${pizza.name}"></td>
-						<td th:text="${pizza.description}"></td>
-						<td th:text="${pizza.price} + ' $'"></td>
-						<td th:text="${pizza.vegetarian} ? 'Sí' : 'No'"></td>
-						<td th:text="${pizza.vegan} ? 'Sí' : 'No'"></td>
-						<td th:text="${pizza.avaible} ? 'Sí' : 'No'"></td>
-						<td>
-							<div class="d-flex flex-column flex-md-row gap-2">
-								<a th:href="@{'/pizzas/editar/' + ${pizza.idPizza}}" class="btn btn-warning btn-sm flex-fill">Editar</a>
-								<button type="button" class="btn btn-danger btn-sm flex-fill" data-bs-toggle="modal" data-bs-target="#deleteModal" th:attrappend="data-pizza-id=${pizza.idPizza},data-pizza-name=${pizza.name}">Borrar</button>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+        <div class="card shadow-lg mt-4 mb-5 mx-auto" style="max-width: 1100px;">
+            <div class="form-header">
+                <h4 class="mb-0 text-uppercase">Lista de Pizzas</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Precio</th>
+                                <th>Vegetariana</th>
+                                <th>Vegana</th>
+                                <th>Disponible</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="pizza : ${pizzas}">
+                                <td th:text="${pizza.idPizza}"></td>
+                                <td th:text="${pizza.name}"></td>
+                                <td th:text="${pizza.description}"></td>
+                                <td th:text="${pizza.price} + ' $'"></td>
+                                <td th:text="${pizza.vegetarian} ? 'Sí' : 'No'"></td>
+                                <td th:text="${pizza.vegan} ? 'Sí' : 'No'"></td>
+                                <td th:text="${pizza.avaible} ? 'Sí' : 'No'"></td>
+                                <td>
+                                    <div class="d-flex flex-column flex-md-row gap-2">
+                                        <a th:href="@{'/pizzas/editar/' + ${pizza.idPizza}}" class="btn btn-warning btn-sm flex-fill">Editar</a>
+                                        <button type="button" class="btn btn-danger btn-sm flex-fill" data-bs-toggle="modal" data-bs-target="#deleteModal" th:attrappend="data-pizza-id=${pizza.idPizza},data-pizza-name=${pizza.name}">Borrar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
 		<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
 		  <div class="modal-dialog">

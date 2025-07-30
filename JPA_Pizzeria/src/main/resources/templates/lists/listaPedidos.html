@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/css/estilos.css}">
+<title>Pedidos</title>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<header data-th-replace="~{fragments/header::header}"></header>
+		</div>
+		<div class="row mb-3 align-items-center">
+            <div class="col-12 col-md-8 text-center text-md-start">
+				<h1 class="mb-0">Lista de Pedidos</h1>
+			</div>
+            <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
+				<a th:href="@{/orders/nuevo}" class="btn btn-success">Nuevo Pedido</a>
+			</div>
+		</div>
+        <div class="card shadow-lg mt-4 mb-5 mx-auto" style="max-width: 900px;">
+            <div class="form-header">
+                <h4 class="mb-0 text-uppercase">Lista de Pedidos</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>Método de Pago</th>
+                                <th>Items</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="pedido : ${pedidos}">
+                                <td th:text="${pedido.idOrder}"></td>
+                                <td th:text="${#temporals.format(pedido.date, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${pedido.customer != null ? pedido.customer.name : 'No asignado'}"></td>
+                                <td th:text="${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')} + ' $'"></td>
+                                <td>
+                                    <span th:switch="${pedido.method}">
+                                        <span th:case="'E'">Efectivo</span>
+                                        <span th:case="'C'">Tarjeta de Crédito</span>
+                                        <span th:case="'D'">Tarjeta de Débito</span>
+                                        <span th:case="'T'">Transferencia</span>
+                                        <span th:case="'M'">MercadoPago</span>
+                                        <span th:case="*" th:text="${pedido.method}"></span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-info btn-sm" 
+                                            data-bs-toggle="modal" 
+                                            th:attr="data-bs-target='#itemsModal' + ${pedido.idOrder}">
+                                        Ver Items (<span th:text="${pedido.items.size()}"></span>)
+                                    </button>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column flex-md-row gap-2">
+                                        <a th:href="@{'/orders/editar/' + ${pedido.idOrder}}" class="btn btn-warning btn-sm flex-fill">Editar</a>
+                                        <button type="button" class="btn btn-danger btn-sm flex-fill" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#deleteModal" 
+                                                th:attr="data-order-id=${pedido.idOrder},data-order-customer=${pedido.customer != null ? pedido.customer.name : 'Sin cliente'}">
+                                            Borrar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${pedidos == null || pedidos.isEmpty()}">
+                                <td colspan="7" class="text-center">No hay pedidos registrados</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para cada pedido con sus ítems -->
+        <div th:each="pedido : ${pedidos}" class="modal fade" th:id="'itemsModal' + ${pedido.idOrder}" tabindex="-1" th:aria-labelledby="'itemsModalLabel' + ${pedido.idOrder}" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" th:id="'itemsModalLabel' + ${pedido.idOrder}">
+                            Ítems del Pedido #<span th:text="${pedido.idOrder}"></span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Pizza</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${pedido.items}">
+                                        <td th:text="${item.pizza != null ? item.pizza.name : 'Pizza no asignada'}"></td>
+                                        <td th:text="${item.quantity}"></td>
+                                        <td th:text="${#numbers.formatDecimal(item.price, 1, 'POINT', 2, 'COMMA')} + ' $'"></td>
+                                        <td th:text="${#numbers.formatDecimal(item.quantity * item.price, 1, 'POINT', 2, 'COMMA')} + ' $'"></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="table-secondary">
+                                    <tr>
+                                        <td colspan="3" class="text-end fw-bold">TOTAL:</td>
+                                        <td th:text="${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')} + ' $'" class="fw-bold"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="mt-3" th:if="${pedido.additionalNotes != null && !pedido.additionalNotes.isEmpty()}">
+                            <h6>Notas adicionales:</h6>
+                            <p class="fst-italic" th:text="${pedido.additionalNotes}"></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de confirmación de borrado -->
+		<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="deleteModalLabel">Confirmar borrado</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+		        ¿Estás seguro de que deseas borrar el pedido #<span id="orderId"></span> del cliente <span id="orderCustomer"></span>?
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+		        <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Borrar</a>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+		<footer data-th-replace="~{fragments/footer::footer}"></footer>
+	</div>
+<script data-th-src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script>
+  var deleteModal = document.getElementById('deleteModal');
+  deleteModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var orderId = button.getAttribute('data-order-id');
+    var orderCustomer = button.getAttribute('data-order-customer');
+    document.getElementById('orderId').textContent = orderId;
+    document.getElementById('orderCustomer').textContent = orderCustomer;
+    document.getElementById('confirmDeleteBtn').href = '/orders/borrar/' + orderId;
+  });
+</script>
+</body>
+</html>

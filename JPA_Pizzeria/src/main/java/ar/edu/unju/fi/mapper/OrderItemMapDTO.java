@@ -15,11 +15,9 @@ public interface OrderItemMapDTO {
 
     @Mapping(source = "idOrder", target = "idOrder")
     @Mapping(source = "idItem", target = "idItem")
-    @Mapping(source = "idPizza", target = "idPizza")
+    @Mapping(source = "pizza", target = "pizza")
     @Mapping(source = "quantity", target = "quantity")
     @Mapping(source = "price", target = "price")
-    // Si OrderItemDTO tuviera un campo 'pizza', necesitarías un mapper para ello:
-    // @Mapping(source = "pizza", target = "pizza")
     OrderItemDTO toDto(OrderItemEntity orderItemEntity);
     
     @InheritInverseConfiguration
