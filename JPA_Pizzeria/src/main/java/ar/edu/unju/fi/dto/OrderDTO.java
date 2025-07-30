@@ -41,4 +41,15 @@ public class OrderDTO {
     @NotNull(message = "La lista de ítems no puede ser nula")
     @Size(min = 1, message = "Debe haber al menos un ítem en el pedido")
     private List<OrderItemDTO> items;
+
+    private Integer selectedPizza;
+    private Integer selectedQuantity;
+
+    public Double getTotal() {
+        if (items == null) return 0.0;
+        return items.stream()
+            .filter(i -> i.getQuantity() != null && i.getPrice() != null)
+            .mapToDouble(i -> i.getQuantity() * i.getPrice())
+            .sum();
+    }
 }

@@ -3,6 +3,7 @@ package ar.edu.unju.fi.entity;
 import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -66,7 +67,8 @@ public class OrderEntity {
 	 * mappedBy = "order": Indica que la entidad OrderItemEntity es la dueña de la relación,
 	 * y que en esa clase hay un campo llamado "order" que define cómo se unen.
 	 * Esto evita que se cree una tabla intermedia adicional.
+	 * cascade = CascadeType.ALL: Propaga todas las operaciones (PERSIST, MERGE, REMOVE, REFRESH, DETACH) a los items.
 	 */
-	@OneToMany(mappedBy = "order")
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderItemEntity> items; // Lista de todos los ítems que componen esta orden.
 }

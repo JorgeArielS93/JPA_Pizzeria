@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/css/estilos.css}">
+<title>Ordenes</title>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<header data-th-replace="~{fragments/header::header}"></header>
+		</div>
+		<h1>Hola mundo</h1>
+		<div class="card shadow-lg mt-4 mb-5 mx-auto" style="max-width: 900px;">
+            <div class="form-header">
+                <h4 class="mb-0 text-uppercase" th:text="${order != null && order.idOrder != null ? 'EDICIÓN DE ORDEN' : 'REGISTRO DE NUEVA ORDEN'}"></h4>
+            </div>
+            <div class="card-body p-4">
+                <!-- Mensajes de validación global -->
+                <div class="alert alert-danger" th:if="${#fields != null && #fields.hasGlobalErrors()}" th:each="error : ${#fields.globalErrors()}">
+                    <span th:text="${error}"></span>
+                </div>
+                
+                <form th:action="@{/orders/nuevo}" th:object="${order}" method="post">
+                    <input type="hidden" th:field="*{idOrder}" />
+                    
+                    <div class="mb-3">
+                        <label for="customer" class="form-label">Cliente *</label>
+                        <select id="customer" class="form-select" th:field="*{idCustomer}">
+                            <option value="" selected>Seleccione un cliente</option>
+                            <option th:each="cliente : ${listaClientes}" 
+                                    th:value="${cliente.idCustomer}" 
+                                    th:text="${cliente.name + ' (' + cliente.dni + ')'}">
+                            </option>
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('idCustomer')}" th:errors="*{idCustomer}"></div>
+                        <div class="text-danger" th:if="${#fields.hasErrors('customer')}" th:errors="*{customer}"></div>
+                    </div>
+
+                    <!-- Añadir selector de método de pago -->
+                    <div class="mb-3">
+                        <label for="method" class="form-label">Método de Pago *</label>
+                        <select id="method" class="form-select" th:field="*{method}" required>
+                            <option value="" selected>Seleccione un método de pago</option>
+                            <option value="E">Efectivo</option>
+<!--                             <option value="C">Tarjeta de Crédito</option> -->
+<!--                             <option value="D">Tarjeta de Débito</option> -->
+                            <option value="T">Transferencia</option>
+                            <option value="M">MercadoPago</option>
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('method')}" th:errors="*{method}"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="additionalNotes" class="form-label">Notas Adicionales</label>
+                        <textarea id="additionalNotes" class="form-control" th:field="*{additionalNotes}" rows="2" 
+                                  placeholder="Instrucciones especiales, alergias, etc."></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('additionalNotes')}" th:errors="*{additionalNotes}"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Agregar Pizza *</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <select id="pizza" class="form-select" name="selectedPizza">
+                                    <option value="" selected>Seleccione una pizza</option>
+                                    <option th:each="pizza : ${pizzas}" th:value="${pizza.idPizza}" th:text="${pizza.name}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" min="1" value="1" class="form-control" name="selectedQuantity" placeholder="Cantidad" />
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" name="addItem" value="true" class="btn btn-primary">Agregar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Ítems del Pedido *</label>
+                        <div class="text-danger" th:if="${#fields.hasErrors('items')}" th:errors="*{items}"></div>
+                        <div th:if="${order != null && order.items != null && !order.items.isEmpty()}">
+                            <table class="table table-bordered align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Pizza</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Subtotal</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item, iterStat : *{items}">
+                                        <input type="hidden" th:field="*{items[__${iterStat.index}__].idPizza}" />
+                                        <td th:text="${item.pizza != null ? item.pizza.name : 'Pizza no asignada'}"></td>
+                                        <td>
+                                            <input type="number" min="1" class="form-control" th:field="*{items[__${iterStat.index}__].quantity}" />
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.01" min="0" class="form-control" th:field="*{items[__${iterStat.index}__].price}" />
+                                        </td>
+                                        <td th:text="${item.quantity != null && item.price != null ? item.quantity * item.price : 0}"></td>
+                                        <td>
+                                            <button type="submit" name="removeItem" th:value="${iterStat.index}" class="btn btn-danger btn-sm">Quitar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="alert alert-warning" th:if="${order == null || order.items == null || order.items.isEmpty()}">
+                            No hay ítems agregados a la orden. Por favor, agregue al menos una pizza.
+                        </div>
+                    </div>
+                    <div class="mb-3 text-end">
+                        <label class="form-label fw-bold">Total:</label>
+                        <span th:text="${order != null && order.total != null ? #numbers.formatDecimal(order.total, 1, 'POINT', 2, 'COMMA') + ' $' : '0,00 $'}"></span>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" formaction="/orders/guardar" class="btn btn-success">Guardar Orden</button>
+                        <a th:href="@{/orders/lista}" class="btn btn-danger">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+		<footer data-th-replace="~{fragments/footer::footer}"></footer>
+	</div>
+<script data-th-src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
