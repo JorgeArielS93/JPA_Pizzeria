@@ -17,15 +17,12 @@ import ar.edu.unju.fi.dto.OrderDTO;
 import ar.edu.unju.fi.dto.OrderItemDTO;
 import ar.edu.unju.fi.dto.PizzaDTO;
 import ar.edu.unju.fi.service.ICustomerService;
-import ar.edu.unju.fi.service.IOrderItemService;
 import ar.edu.unju.fi.service.IOrderService;
 import ar.edu.unju.fi.service.IPizzaService;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @Slf4j
@@ -231,6 +228,13 @@ public class OrderController {
 			log.warn("WARN - No se encontró orden con ID {} para editar. Redirigiendo a la lista.", id);
 			return "redirect:/orders/lista";
 		}
+		
+		// Asegurarnos que el idCustomer se establezca correctamente desde el customerDTO
+		if (orderEncontrada.getCustomer() != null) {
+			orderEncontrada.setIdCustomer(String.valueOf(orderEncontrada.getCustomer().getIdCustomer()));
+			log.info("INFO - Cliente asociado a la orden para edición: {}", orderEncontrada.getCustomer().getName());
+		}
+		
 		model.addAttribute("order", orderEncontrada);
 		model.addAttribute("isEdit", true);
 		model.addAttribute("listaClientes", customerService.findAll());
