@@ -1,11 +1,11 @@
 <footer class="section-dark-bg main-footer text-center" th:fragment="footer">
     <div class="container">
         <p>&copy; <span th:text="${#dates.year(#dates.createNow())}">2024</span> Facultad de Ingeniería - UNJu. Todos los derechos reservados.</p>
-        <p>Contacto: info@pizzeriaunju.com</p>
+        <p><i class="bi bi-envelope me-1"></i> Contacto: info@pizzeriaunju.com</p>
         <div class="mt-2">
-            <a href="#"><i class="fab fa-facebook-f"></i> Facebook</a>
-            <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-            <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+            <a href="#" class="me-3 text-decoration-none"><i class="bi bi-facebook me-1"></i> Facebook</a>
+            <a href="#" class="me-3 text-decoration-none"><i class="bi bi-instagram me-1"></i> Instagram</a>
+            <a href="#" class="text-decoration-none"><i class="bi bi-twitter-x me-1"></i> Twitter</a>
         </div>
     </div>
 </footer>

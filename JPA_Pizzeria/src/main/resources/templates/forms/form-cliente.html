@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/bootstrap-icons-1.13.1/bootstrap-icons.css}">
 <link rel="stylesheet" th:href="@{/css/estilos.css}">
 <title>Inicio</title>
 </head>
@@ -12,7 +13,11 @@
 		<header data-th-replace="~{fragments/header::header}"></header>
 		<div class="card shadow-lg mt-4 mb-5 mx-auto" style="max-width: 700px;">
             <div class="form-header">
-                <h4 class="mb-0 text-uppercase" th:text="${cliente.idCustomer == null ? 'REGISTRO DE NUEVO CLIENTE' : 'EDICIÓN DE CLIENTE'}"></h4>
+                <h4 class="mb-0 text-uppercase">
+                    <i th:if="${cliente.idCustomer != null}" class="bi bi-pencil-square me-2"></i>
+                    <i th:unless="${cliente.idCustomer != null}" class="bi bi-person-plus me-2"></i>
+                    <span th:text="${cliente.idCustomer == null ? 'REGISTRO DE NUEVO CLIENTE' : 'EDICIÓN DE CLIENTE'}"></span>
+                </h4>
             </div>
 
             <div class="card-body p-4">
@@ -20,40 +25,55 @@
 				    <input type="hidden" th:field="*{idCustomer}" th:if="${isEdit}" />
 				
 				    <div class="mb-3">
-				        <label for="dni" class="form-label">DNI</label>
-				        <input type="text" id="dni" class="form-control" 
-				               th:field="*{dni}" 
-				               placeholder="Ej: 12345678" >
+				        <label for="dni" class="form-label"><i class="bi bi-card-text me-2"></i>DNI</label>
+				        <div class="input-group">
+				            <span class="input-group-text"><i class="bi bi-hash"></i></span>
+				            <input type="text" id="dni" class="form-control" 
+				                   th:field="*{dni}" 
+				                   placeholder="Ej: 12345678" >
+				        </div>
 				        <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
 				    </div>
 				
 				    <div class="mb-3">
-				        <label for="name" class="form-label">Nombre y Apellido</label>
-				        <input type="text" id="name" class="form-control" th:field="*{name}" placeholder="Ej: Juan Gabriel">
+				        <label for="name" class="form-label"><i class="bi bi-person me-2"></i>Nombre y Apellido</label>
+				        <div class="input-group">
+				            <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+				            <input type="text" id="name" class="form-control" th:field="*{name}" placeholder="Ej: Juan Gabriel">
+				        </div>
 				        <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
 				    </div>
 				
 				    <div class="mb-3">
-				        <label for="address" class="form-label">Dirección</label>
-				        <input type="text" id="address" class="form-control" th:field="*{address}" placeholder="Ej: Av. Siempre Viva 123">
+				        <label for="address" class="form-label"><i class="bi bi-geo-alt me-2"></i>Dirección</label>
+				        <div class="input-group">
+				            <span class="input-group-text"><i class="bi bi-house-door"></i></span>
+				            <input type="text" id="address" class="form-control" th:field="*{address}" placeholder="Ej: Av. Siempre Viva 123">
+				        </div>
 				        <div class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
 				    </div>
 				
 				    <div class="mb-3">
-				        <label for="email" class="form-label">Email</label>
-				        <input type="email" id="email" class="form-control" th:field="*{email}" placeholder="Ej: juan@email.com">
+				        <label for="email" class="form-label"><i class="bi bi-envelope me-2"></i>Email</label>
+				        <div class="input-group">
+				            <span class="input-group-text"><i class="bi bi-at"></i></span>
+				            <input type="email" id="email" class="form-control" th:field="*{email}" placeholder="Ej: juan@email.com">
+				        </div>
 				        <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
 				    </div>
 				
 				    <div class="mb-3">
-				        <label for="phoneNumber" class="form-label">Teléfono</label>
-				        <input type="text" id="phoneNumber" class="form-control" th:field="*{phoneNumber}" placeholder="Ej: +543884123456">
+				        <label for="phoneNumber" class="form-label"><i class="bi bi-telephone me-2"></i>Teléfono</label>
+				        <div class="input-group">
+				            <span class="input-group-text"><i class="bi bi-phone"></i></span>
+				            <input type="text" id="phoneNumber" class="form-control" th:field="*{phoneNumber}" placeholder="Ej: +543884123456">
+				        </div>
 				        <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
 				    </div>
 				
 				    <div class="form-actions">
-				        <button type="submit" class="btn btn-success ">Guardar Cliente</button>
-				        <a th:href="@{/customers/lista}" class="btn btn-danger ">Cancelar</a>
+				        <button type="submit" class="btn btn-success"><i class="bi bi-check-circle me-2"></i>Guardar Cliente</button>
+				        <a th:href="@{/customers/lista}" class="btn btn-danger"><i class="bi bi-x-circle me-2"></i>Cancelar</a>
 				    </div>
 				</form>
             </div>
