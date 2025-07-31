@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/bootstrap-icons-1.13.1/bootstrap-icons.css}">
 <link rel="stylesheet" th:href="@{/css/estilos.css}">
 <title>Pedidos</title>
 </head>
@@ -14,43 +15,41 @@
 		</div>
 		<div class="row mb-3 align-items-center">
             <div class="col-12 col-md-8 text-center text-md-start">
-				<h1 class="mb-0">Lista de Pedidos</h1>
+				<h1 class="mb-0"><i class="bi bi-cart-check-fill me-2 text-success"></i>Lista de Pedidos</h1>
 			</div>
             <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
-				<a th:href="@{/orders/nuevo}" class="btn btn-success">Nuevo Pedido</a>
+				<a th:href="@{/orders/nuevo}" class="btn btn-success"><i class="bi bi-plus-circle me-2"></i>Nuevo Pedido</a>
 			</div>
 		</div>
         <div class="card shadow-lg mt-4 mb-5 mx-auto" style="max-width: 900px;">
             <div class="form-header">
-                <h4 class="mb-0 text-uppercase">Lista de Pedidos</h4>
+                <h4 class="mb-0 text-uppercase"><i class="bi bi-list-check me-2"></i>Lista de Pedidos</h4>
             </div>
             <div class="card-body p-4">
                 <div class="table-responsive">
                     <table class="table table-striped align-middle">
                         <thead class="table-dark">
                             <tr>
-                                <th>#</th>
-                                <th>Fecha</th>
-                                <th>Cliente</th>
-                                <th>Total</th>
-                                <th>Método de Pago</th>
-                                <th>Items</th>
-                                <th>Acciones</th>
+                                <th><i class="bi bi-calendar-date me-1"></i> Fecha</th>
+                                <th><i class="bi bi-person me-1"></i> Cliente</th>
+                                <th><i class="bi bi-currency-dollar me-1"></i> Total</th>
+                                <th><i class="bi bi-credit-card me-1"></i> Método de Pago</th>
+                                <th><i class="bi bi-boxes me-1"></i> Items</th>
+                                <th><i class="bi bi-gear me-1"></i> Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="pedido : ${pedidos}">
-                                <td th:text="${pedido.idOrder}"></td>
                                 <td th:text="${#temporals.format(pedido.date, 'dd/MM/yyyy')}"></td>
                                 <td th:text="${pedido.customer != null ? pedido.customer.name : 'No asignado'}"></td>
                                 <td th:text="${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')} + ' $'"></td>
                                 <td>
                                     <span th:switch="${pedido.method}">
-                                        <span th:case="'E'">Efectivo</span>
-                                        <span th:case="'C'">Tarjeta de Crédito</span>
-                                        <span th:case="'D'">Tarjeta de Débito</span>
-                                        <span th:case="'T'">Transferencia</span>
-                                        <span th:case="'M'">MercadoPago</span>
+                                        <span th:case="'E'"><i class="bi bi-cash me-1 text-success"></i> Efectivo</span>
+                                        <span th:case="'C'"><i class="bi bi-credit-card me-1 text-primary"></i> Tarjeta de Crédito</span>
+                                        <span th:case="'D'"><i class="bi bi-credit-card me-1 text-info"></i> Tarjeta de Débito</span>
+                                        <span th:case="'T'"><i class="bi bi-bank me-1 text-dark"></i> Transferencia</span>
+                                        <span th:case="'M'"><i class="bi bi-wallet2 me-1 text-warning"></i> MercadoPago</span>
                                         <span th:case="*" th:text="${pedido.method}"></span>
                                     </span>
                                 </td>
@@ -58,23 +57,28 @@
                                     <button type="button" class="btn btn-info btn-sm" 
                                             data-bs-toggle="modal" 
                                             th:attr="data-bs-target='#itemsModal' + ${pedido.idOrder}">
-                                        Ver Items (<span th:text="${pedido.items.size()}"></span>)
+                                        <i class="bi bi-eye me-1"></i> Ver Items (<span th:text="${pedido.items.size()}"></span>)
                                     </button>
                                 </td>
                                 <td>
                                     <div class="d-flex flex-column flex-md-row gap-2">
-                                        <a th:href="@{'/orders/editar/' + ${pedido.idOrder}}" class="btn btn-warning btn-sm flex-fill">Editar</a>
+                                        <a th:href="@{'/orders/editar/' + ${pedido.idOrder}}" class="btn btn-warning btn-sm flex-fill">
+                                            <i class="bi bi-pencil-square me-1"></i> Editar
+                                        </a>
                                         <button type="button" class="btn btn-danger btn-sm flex-fill" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#deleteModal" 
                                                 th:attr="data-order-id=${pedido.idOrder},data-order-customer=${pedido.customer != null ? pedido.customer.name : 'Sin cliente'}">
-                                            Borrar
+                                            <i class="bi bi-trash me-1"></i> Borrar
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                             <tr th:if="${pedidos == null || pedidos.isEmpty()}">
-                                <td colspan="7" class="text-center">No hay pedidos registrados</td>
+                                <td colspan="7" class="text-center">
+                                    <i class="bi bi-exclamation-circle text-warning me-2" style="font-size: 1.5rem;"></i>
+                                    No hay pedidos registrados
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -88,6 +92,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" th:id="'itemsModalLabel' + ${pedido.idOrder}">
+                            <i class="bi bi-bag-check me-2 text-success"></i>
                             Ítems del Pedido #<span th:text="${pedido.idOrder}"></span>
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -97,10 +102,10 @@
                             <table class="table table-striped">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Pizza</th>
-                                        <th>Cantidad</th>
-                                        <th>Precio Unitario</th>
-                                        <th>Subtotal</th>
+                                        <th><i class="bi bi-box me-1"></i> Pizza</th>
+                                        <th><i class="bi bi-123 me-1"></i> Cantidad</th>
+                                        <th><i class="bi bi-tag me-1"></i> Precio Unitario</th>
+                                        <th><i class="bi bi-calculator me-1"></i> Subtotal</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -113,19 +118,21 @@
                                 </tbody>
                                 <tfoot class="table-secondary">
                                     <tr>
-                                        <td colspan="3" class="text-end fw-bold">TOTAL:</td>
+                                        <td colspan="3" class="text-end fw-bold"><i class="bi bi-currency-dollar me-1"></i> TOTAL:</td>
                                         <td th:text="${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')} + ' $'" class="fw-bold"></td>
                                     </tr>
                                 </tfoot>
                             </table>
                         </div>
                         <div class="mt-3" th:if="${pedido.additionalNotes != null && !pedido.additionalNotes.isEmpty()}">
-                            <h6>Notas adicionales:</h6>
+                            <h6><i class="bi bi-sticky me-2"></i>Notas adicionales:</h6>
                             <p class="fst-italic" th:text="${pedido.additionalNotes}"></p>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i> Cerrar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -136,15 +143,20 @@
 		  <div class="modal-dialog">
 		    <div class="modal-content">
 		      <div class="modal-header">
-		        <h5 class="modal-title" id="deleteModalLabel">Confirmar borrado</h5>
+		        <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Confirmar borrado</h5>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
+		        <i class="bi bi-question-circle text-warning me-2"></i>
 		        ¿Estás seguro de que deseas borrar el pedido #<span id="orderId"></span> del cliente <span id="orderCustomer"></span>?
 		      </div>
 		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-		        <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Borrar</a>
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+		            <i class="bi bi-x-circle me-1"></i> Cancelar
+		        </button>
+		        <a id="confirmDeleteBtn" href="#" class="btn btn-danger">
+		            <i class="bi bi-trash me-1"></i> Borrar
+		        </a>
 		      </div>
 		    </div>
 		  </div>

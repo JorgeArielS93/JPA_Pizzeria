@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/bootstrap-icons-1.13.1/bootstrap-icons.css}">
 <link rel="stylesheet" th:href="@{/css/estilos.css}">
 <title>Lista de Pizzas</title>
 </head>
@@ -15,29 +16,29 @@
 
 		<div class="row mb-3 align-items-center">
             <div class="col-12 col-md-8 text-center text-md-start">
-				<h1 class="mb-0">Lista de Pizzas</h1>
+				<h1 class="mb-0"><i class="bi bi-grid-3x3-gap-fill me-2 text-danger"></i>Lista de Pizzas</h1>
 			</div>
             <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
-				<a th:href="@{/pizzas/nuevo}" class="btn btn-success">Agregar Pizza</a>
+				<a th:href="@{/pizzas/nuevo}" class="btn btn-success"><i class="bi bi-plus-circle me-2"></i>Agregar Pizza</a>
 			</div>
 		</div>
         <div class="card shadow-lg mt-4 mb-5 mx-auto" style="max-width: 1100px;">
             <div class="form-header">
-                <h4 class="mb-0 text-uppercase">Lista de Pizzas</h4>
+                <h4 class="mb-0 text-uppercase"><i class="bi bi-list-check me-2"></i>Lista de Pizzas</h4>
             </div>
             <div class="card-body p-4">
                 <div class="table-responsive">
                     <table class="table table-striped align-middle">
                         <thead class="table-dark">
                             <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Descripción</th>
-                                <th>Precio</th>
-                                <th>Vegetariana</th>
-                                <th>Vegana</th>
-                                <th>Disponible</th>
-                                <th>Acciones</th>
+                                <th><i class="bi bi-hash me-1"></i> ID</th>
+                                <th><i class="bi bi-tag me-1"></i> Nombre</th>
+                                <th><i class="bi bi-card-text me-1"></i> Descripción</th>
+                                <th><i class="bi bi-currency-dollar me-1"></i> Precio</th>
+                                <th><i class="bi bi-flower1 me-1"></i> Vegetariana</th>
+                                <th><i class="bi bi-tree me-1"></i> Vegana</th>
+                                <th><i class="bi bi-check-circle me-1"></i> Disponible</th>
+                                <th><i class="bi bi-gear me-1"></i> Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -46,14 +47,36 @@
                                 <td th:text="${pizza.name}"></td>
                                 <td th:text="${pizza.description}"></td>
                                 <td th:text="${pizza.price} + ' $'"></td>
-                                <td th:text="${pizza.vegetarian} ? 'Sí' : 'No'"></td>
-                                <td th:text="${pizza.vegan} ? 'Sí' : 'No'"></td>
-                                <td th:text="${pizza.avaible} ? 'Sí' : 'No'"></td>
+                                <td>
+                                    <span th:if="${pizza.vegetarian}" class="text-success"><i class="bi bi-check-circle-fill"></i> Sí</span>
+                                    <span th:unless="${pizza.vegetarian}" class="text-danger"><i class="bi bi-x-circle-fill"></i> No</span>
+                                </td>
+                                <td>
+                                    <span th:if="${pizza.vegan}" class="text-success"><i class="bi bi-check-circle-fill"></i> Sí</span>
+                                    <span th:unless="${pizza.vegan}" class="text-danger"><i class="bi bi-x-circle-fill"></i> No</span>
+                                </td>
+                                <td>
+                                    <span th:if="${pizza.avaible}" class="text-success"><i class="bi bi-check-circle-fill"></i> Sí</span>
+                                    <span th:unless="${pizza.avaible}" class="text-danger"><i class="bi bi-x-circle-fill"></i> No</span>
+                                </td>
                                 <td>
                                     <div class="d-flex flex-column flex-md-row gap-2">
-                                        <a th:href="@{'/pizzas/editar/' + ${pizza.idPizza}}" class="btn btn-warning btn-sm flex-fill">Editar</a>
-                                        <button type="button" class="btn btn-danger btn-sm flex-fill" data-bs-toggle="modal" data-bs-target="#deleteModal" th:attrappend="data-pizza-id=${pizza.idPizza},data-pizza-name=${pizza.name}">Borrar</button>
+                                        <a th:href="@{'/pizzas/editar/' + ${pizza.idPizza}}" class="btn btn-warning btn-sm flex-fill">
+                                            <i class="bi bi-pencil-square me-1"></i> Editar
+                                        </a>
+                                        <button type="button" class="btn btn-danger btn-sm flex-fill" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#deleteModal" 
+                                                th:attrappend="data-pizza-id=${pizza.idPizza},data-pizza-name=${pizza.name}">
+                                            <i class="bi bi-trash me-1"></i> Borrar
+                                        </button>
                                     </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${pizzas == null || pizzas.isEmpty()}">
+                                <td colspan="8" class="text-center">
+                                    <i class="bi bi-exclamation-circle text-warning me-2" style="font-size: 1.5rem;"></i>
+                                    No hay pizzas registradas
                                 </td>
                             </tr>
                         </tbody>
@@ -66,15 +89,15 @@
 		  <div class="modal-dialog">
 		    <div class="modal-content">
 		      <div class="modal-header">
-		        <h5 class="modal-title" id="deleteModalLabel">Confirmar borrado</h5>
+		        <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Confirmar borrado</h5>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
-		        ¿Estás seguro de que deseas borrar la pizza <span id="pizzaName"></span>?
+		        <i class="bi bi-question-circle me-2"></i>¿Estás seguro de que deseas borrar la pizza <span id="pizzaName"></span>?
 		      </div>
 		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-		        <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Borrar</a>
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-2"></i>Cancelar</button>
+		        <a id="confirmDeleteBtn" href="#" class="btn btn-danger"><i class="bi bi-trash me-2"></i>Borrar</a>
 		      </div>
 		    </div>
 		  </div>

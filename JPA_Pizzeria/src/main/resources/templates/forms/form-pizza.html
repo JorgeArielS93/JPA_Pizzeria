@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-icons-1.13.1/bootstrap-icons.css}">
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
     <title th:text="${pizza.idPizza == null ? 'Nueva Pizza' : 'Editar Pizza'}">Formulario de Pizza</title>
 </head>
@@ -13,7 +14,11 @@
 		
         <div class="card shadow-lg mt-4 mb-5 mx-auto" style="max-width: 700px;">
             <div class="form-header">
-                <h4 class="mb-0 text-uppercase" th:text="${pizza.idPizza == null ? 'REGISTRO DE NUEVA PIZZA' : 'EDICIÓN DE PIZZA'}"></h4>
+                <h4 class="mb-0 text-uppercase">
+                    <i th:if="${pizza.idPizza != null}" class="bi bi-pencil-square me-2"></i>
+                    <i th:unless="${pizza.idPizza != null}" class="bi bi-plus-circle me-2"></i>
+                    <span th:text="${pizza.idPizza == null ? 'REGISTRO DE NUEVA PIZZA' : 'EDICIÓN DE PIZZA'}"></span>
+                </h4>
             </div>
 
             <div class="card-body p-4">
@@ -22,20 +27,29 @@
                     <input type="hidden" th:field="*{idPizza}" />
 
                     <div class="mb-3">
-                        <label for="name" class="form-label">Nombre</label>
-                        <input type="text" id="name" class="form-control" th:field="*{name}" placeholder="Ej: Muzzarella">
+                        <label for="name" class="form-label"><i class="bi bi-tag-fill me-2"></i>Nombre</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-type"></i></span>
+                            <input type="text" id="name" class="form-control" th:field="*{name}" placeholder="Ej: Muzzarella">
+                        </div>
                         <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="description" class="form-label">Descripción</label>
-                        <textarea id="description" class="form-control" th:field="*{description}" rows="3" placeholder="Ingredientes y detalles"></textarea>
+                        <label for="description" class="form-label"><i class="bi bi-card-text me-2"></i>Descripción</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-list-ul"></i></span>
+                            <textarea id="description" class="form-control" th:field="*{description}" rows="3" placeholder="Ingredientes y detalles"></textarea>
+                        </div>
                         <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="price" class="form-label">Precio</label>
-                        <input type="number" id="price" class="form-control" th:field="*{price}" step="0.01" placeholder="Ej: 9500.50">
+                        <label for="price" class="form-label"><i class="bi bi-currency-dollar me-2"></i>Precio</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-cash"></i></span>
+                            <input type="number" id="price" class="form-control" th:field="*{price}" step="0.01" placeholder="Ej: 9500.50">
+                        </div>
                         <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
                     </div>
 
@@ -43,27 +57,27 @@
                         <div class="col-md-4">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" id="vegetarian" th:field="*{vegetarian}">
-                                <label class="form-check-label" for="vegetarian">Vegetariana</label>
+                                <label class="form-check-label" for="vegetarian"><i class="bi bi-flower1 me-2 text-success"></i>Vegetariana</label>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" id="vegan" th:field="*{vegan}">
-                                <label class="form-check-label" for="vegan">Vegana</label>
+                                <label class="form-check-label" for="vegan"><i class="bi bi-tree me-2 text-success"></i>Vegana</label>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" id="avaible" th:field="*{avaible}">
-                                <label class="form-check-label" for="avaible">Disponible</label>
+                                <label class="form-check-label" for="avaible"><i class="bi bi-check-circle me-2 text-primary"></i>Disponible</label>
                                 <div class="text-danger" th:if="${#fields.hasErrors('avaible')}" th:errors="*{avaible}"></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-success ">Guardar Pizza</button>
-                        <a th:href="@{/pizzas/lista}" class="btn btn-danger ">Cancelar</a>
+                        <button type="submit" class="btn btn-success"><i class="bi bi-check-circle me-2"></i>Guardar Pizza</button>
+                        <a th:href="@{/pizzas/lista}" class="btn btn-danger"><i class="bi bi-x-circle me-2"></i>Cancelar</a>
                     </div>
                 </form>
             </div>

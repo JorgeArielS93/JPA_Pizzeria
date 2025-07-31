@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/bootstrap-icons-1.13.1/bootstrap-icons.css}">
 <link rel="stylesheet" th:href="@{/css/estilos.css}">
 <title>Inicio</title>
 </head>
@@ -12,9 +13,59 @@
 		<div class="row">
 			<header data-th-replace="~{fragments/header::header}"></header>
 		</div>
-		<h1>Hola mundo</h1>
+		<div class="d-flex justify-content-center align-items-center min-vh-100 bg-light"> 
+		    <div class="card shadow-lg p-0 login-form-card">
+		        <div class="card-body p-4 text-center">
+                    <h2 class="mb-4 login-title">Bienvenido a Pizzeria</h2>
+                    <div class="login-icon-container mb-4">
+                        <i class="bi bi-shop text-primary" style="font-size: 3rem;"></i>
+                    </div>
+
+                    <form>
+                        <div class="mb-4">
+                            <label for="email" class="form-label login-label">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input type="email" id="email" class="form-control login-input" placeholder="johndoe@example.com">
+                            </div>
+                        </div>
+
+                        <div class="mb-5 position-relative">
+                            <label for="password" class="form-label login-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input type="password" id="password" class="form-control login-input" placeholder="Contraseña">
+                                <span class="input-group-text" style="cursor:pointer;" onclick="togglePassword()">
+                                    <i id="toggleIcon" class="bi bi-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mb-4">
+                            <button type="submit" class="btn btn-primary py-2">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Ingresar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+		    </div>
+		</div>
 		<footer data-th-replace="~{fragments/footer::footer}"></footer>
 	</div>
 <script data-th-src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script>
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.replace('bi-eye', 'bi-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.replace('bi-eye-slash', 'bi-eye');
+    }
+}
+</script>
 </body>
 </html>

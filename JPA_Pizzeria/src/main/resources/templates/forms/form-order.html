@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/bootstrap-icons-1.13.1/bootstrap-icons.css}">
 <link rel="stylesheet" th:href="@{/css/estilos.css}">
 <title>Ordenes</title>
 </head>
@@ -14,11 +15,16 @@
 		</div>
 		<div class="card shadow-lg mt-4 mb-5 mx-auto" style="max-width: 900px;">
             <div class="form-header">
-                <h4 class="mb-0 text-uppercase" th:text="${order != null && order.idOrder != null ? 'EDICIÓN DE ORDEN' : 'REGISTRO DE NUEVA ORDEN'}"></h4>
+                <h4 class="mb-0 text-uppercase">
+                    <i th:if="${order != null && order.idOrder != null}" class="bi bi-pencil-square me-2"></i>
+                    <i th:unless="${order != null && order.idOrder != null}" class="bi bi-plus-square me-2"></i>
+                    <span th:text="${order != null && order.idOrder != null ? 'EDICIÓN DE ORDEN' : 'REGISTRO DE NUEVA ORDEN'}"></span>
+                </h4>
             </div>
             <div class="card-body p-4">
                 <!-- Mensajes de validación global -->
                 <div class="alert alert-danger" th:if="${#fields != null && #fields.hasGlobalErrors()}" th:each="error : ${#fields.globalErrors()}">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     <span th:text="${error}"></span>
                 </div>
                 
@@ -26,7 +32,7 @@
                     <input type="hidden" th:field="*{idOrder}" />
                     
                     <div class="mb-3">
-                        <label for="customer" class="form-label">Cliente *</label>
+                        <label for="customer" class="form-label"><i class="bi bi-person-fill me-2"></i>Cliente *</label>
                         <select id="customer" class="form-select" th:field="*{idCustomer}">
                             <option value="" selected>Seleccione un cliente</option>
                             <option th:each="cliente : ${listaClientes}" 
@@ -40,27 +46,27 @@
 
                     <!-- Añadir selector de método de pago -->
                     <div class="mb-3">
-                        <label for="method" class="form-label">Método de Pago *</label>
+                        <label for="method" class="form-label"><i class="bi bi-credit-card-fill me-2"></i>Método de Pago *</label>
                         <select id="method" class="form-select" th:field="*{method}" required>
                             <option value="" selected>Seleccione un método de pago</option>
-                            <option value="E">Efectivo</option>
+                            <option value="E"><i class="bi bi-cash"></i> Efectivo</option>
 <!--                             <option value="C">Tarjeta de Crédito</option> -->
 <!--                             <option value="D">Tarjeta de Débito</option> -->
-                            <option value="T">Transferencia</option>
-                            <option value="M">MercadoPago</option>
+                            <option value="T"><i class="bi bi-bank"></i> Transferencia</option>
+                            <option value="M"><i class="bi bi-wallet2"></i> MercadoPago</option>
                         </select>
                         <div class="text-danger" th:if="${#fields.hasErrors('method')}" th:errors="*{method}"></div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="additionalNotes" class="form-label">Notas Adicionales</label>
+                        <label for="additionalNotes" class="form-label"><i class="bi bi-sticky me-2"></i>Notas Adicionales</label>
                         <textarea id="additionalNotes" class="form-control" th:field="*{additionalNotes}" rows="2" 
                                   placeholder="Instrucciones especiales, alergias, etc."></textarea>
                         <div class="text-danger" th:if="${#fields.hasErrors('additionalNotes')}" th:errors="*{additionalNotes}"></div>
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label">Agregar Pizza *</label>
+                        <label class="form-label"><i class="bi bi-plus-circle me-2 text-success"></i>Agregar Pizza *</label>
                         <div class="row">
                             <div class="col-md-6">
                                 <select id="pizza" class="form-select" name="selectedPizza">
@@ -72,23 +78,25 @@
                                 <input type="number" min="1" value="1" class="form-control" name="selectedQuantity" placeholder="Cantidad" />
                             </div>
                             <div class="col-md-3">
-                                <button type="submit" name="addItem" value="true" class="btn btn-primary">Agregar</button>
+                                <button type="submit" name="addItem" value="true" class="btn btn-primary">
+                                    <i class="bi bi-plus-lg me-1"></i> Agregar
+                                </button>
                             </div>
                         </div>
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label">Ítems del Pedido *</label>
+                        <label class="form-label"><i class="bi bi-cart4 me-2"></i>Ítems del Pedido *</label>
                         <div class="text-danger" th:if="${#fields.hasErrors('items')}" th:errors="*{items}"></div>
                         <div th:if="${order != null && order.items != null && !order.items.isEmpty()}">
                             <table class="table table-bordered align-middle">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Pizza</th>
-                                        <th>Cantidad</th>
-                                        <th>Precio Unitario</th>
-                                        <th>Subtotal</th>
-                                        <th>Acciones</th>
+                                        <th><i class="bi bi-box me-1"></i> Pizza</th>
+                                        <th><i class="bi bi-123 me-1"></i> Cantidad</th>
+                                        <th><i class="bi bi-tag me-1"></i> Precio Unitario</th>
+                                        <th><i class="bi bi-calculator me-1"></i> Subtotal</th>
+                                        <th><i class="bi bi-gear me-1"></i> Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -103,23 +111,30 @@
                                         </td>
                                         <td th:text="${item.quantity != null && item.price != null ? item.quantity * item.price : 0}"></td>
                                         <td>
-                                            <button type="submit" name="removeItem" th:value="${iterStat.index}" class="btn btn-danger btn-sm">Quitar</button>
+                                            <button type="submit" name="removeItem" th:value="${iterStat.index}" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash me-1"></i> Quitar
+                                            </button>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="alert alert-warning" th:if="${order == null || order.items == null || order.items.isEmpty()}">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
                             No hay ítems agregados a la orden. Por favor, agregue al menos una pizza.
                         </div>
                     </div>
                     <div class="mb-3 text-end">
-                        <label class="form-label fw-bold">Total:</label>
-                        <span th:text="${order != null && order.total != null ? #numbers.formatDecimal(order.total, 1, 'POINT', 2, 'COMMA') + ' $' : '0,00 $'}"></span>
+                        <label class="form-label fw-bold"><i class="bi bi-cash-coin me-1"></i>Total:</label>
+                        <span class="badge bg-success fs-5" th:text="${order != null && order.total != null ? #numbers.formatDecimal(order.total, 1, 'POINT', 2, 'COMMA') + ' $' : '0,00 $'}"></span>
                     </div>
                     <div class="form-actions">
-                        <button type="submit" formaction="/orders/guardar" class="btn btn-success">Guardar Orden</button>
-                        <a th:href="@{/orders/lista}" class="btn btn-danger">Cancelar</a>
+                        <button type="submit" formaction="/orders/guardar" class="btn btn-success">
+                            <i class="bi bi-save me-1"></i> Guardar Orden
+                        </button>
+                        <a th:href="@{/orders/lista}" class="btn btn-danger">
+                            <i class="bi bi-x-circle me-1"></i> Cancelar
+                        </a>
                     </div>
                 </form>
             </div>

@@ -1,10 +1,11 @@
 <header class="section-dark-bg main-header text-center" th:fragment="header">
-    <h1>Facultad de Ingeniería - Gestión Pizzería</h1>
+    <h1><i class="bi bi-shop-window me-2 text-warning"></i>Facultad de Ingeniería - Gestión Pizzería</h1>
+
     <p class="university-motto">“Flammam Tvam Hoc Foco Accende”</p>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mt-3">
         <div class="container-fluid">
-            <a class="navbar-brand" th:href="@{/principal/home}">Pizzeria App</a>
+            <a class="navbar-brand" th:href="@{/principal/home}"><i class="bi bi-shop me-2"></i>Pizzeria App</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -12,31 +13,31 @@
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarCustomersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Clientes
+                            <i class="bi bi-people me-2"></i>Clientes
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarCustomersDropdown">
-                            <li><a class="dropdown-item" th:href="@{/customers/nuevo}">Agregar Cliente</a></li>
-                            <li><a class="dropdown-item" th:href="@{/customers/lista}">Ver Clientes</a></li>
+                            <li><a class="dropdown-item" th:href="@{/customers/nuevo}"><i class="bi bi-person-plus me-2"></i>Agregar Cliente</a></li>
+                            <li><a class="dropdown-item" th:href="@{/customers/lista}"><i class="bi bi-list-ul me-2"></i>Ver Clientes</a></li>
                         </ul>
                     </li>
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarPizzasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Pizzas
+                            <i class="bi bi-circle-square me-2"></i>Pizzas
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarPizzasDropdown">
-                            <li><a class="dropdown-item" th:href="@{/pizzas/nuevo}">Agregar Pizza</a></li>
-                            <li><a class="dropdown-item" th:href="@{/pizzas/lista}">Ver Pizzas</a></li>
+                            <li><a class="dropdown-item" th:href="@{/pizzas/nuevo}"><i class="bi bi-plus-circle me-2"></i>Agregar Pizza</a></li>
+                            <li><a class="dropdown-item" th:href="@{/pizzas/lista}"><i class="bi bi-grid me-2"></i>Ver Pizzas</a></li>
                         </ul>
                     </li>
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarOrdersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Órdenes
+                            <i class="bi bi-basket me-2"></i>Órdenes
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarOrdersDropdown">
-                            <li><a class="dropdown-item" th:href="@{/orders/nuevo}">Nueva Orden</a></li>
-                            <li><a class="dropdown-item" th:href="@{/orders/lista}">Ver Órdenes</a></li>
+                            <li><a class="dropdown-item" th:href="@{/orders/nuevo}"><i class="bi bi-plus-square me-2"></i>Nueva Orden</a></li>
+                            <li><a class="dropdown-item" th:href="@{/orders/lista}"><i class="bi bi-list-check me-2"></i>Ver Órdenes</a></li>
                         </ul>
                     </li>
                 </ul>

@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/bootstrap-icons-1.13.1/bootstrap-icons.css}">
 <link rel="stylesheet" th:href="@{/css/estilos.css}">
 <title>Lista de Clientes</title>
 </head>
@@ -15,27 +16,27 @@
 		
 		<div class="row mb-3 align-items-center">
             <div class="col-12 col-md-8 text-center text-md-start">
-				<h1 class="mb-0">Lista de Clientes</h1>
+				<h1 class="mb-0"><i class="bi bi-people-fill me-2 text-primary"></i>Lista de Clientes</h1>
 			</div>
             <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
-				<a th:href="@{/customers/nuevo}" class="btn btn-success">Agregar Cliente</a>
+				<a th:href="@{/customers/nuevo}" class="btn btn-success"><i class="bi bi-person-plus-fill me-2"></i>Agregar Cliente</a>
 			</div>
 		</div>
         <div class="card shadow-lg mt-4 mb-5 mx-auto" style="max-width: 900px;">
             <div class="form-header">
-                <h4 class="mb-0 text-uppercase">Lista de Clientes</h4>
+                <h4 class="mb-0 text-uppercase"><i class="bi bi-list-check me-2"></i>Lista de Clientes</h4>
             </div>
             <div class="card-body p-4">
                 <div class="table-responsive">
                     <table class="table table-striped align-middle">
                         <thead class="table-dark">
                             <tr>
-                                <th>DNI</th>
-                                <th>Nombre</th>
-                                <th>Dirección</th>
-                                <th>Email</th>
-                                <th>Teléfono</th>
-                                <th>Acciones</th>
+                                <th><i class="bi bi-card-text me-1"></i> DNI</th>
+                                <th><i class="bi bi-person me-1"></i> Nombre</th>
+                                <th><i class="bi bi-geo-alt me-1"></i> Dirección</th>
+                                <th><i class="bi bi-envelope me-1"></i> Email</th>
+                                <th style="min-width: 120px;"><i class="bi bi-phone me-1"></i> Teléfono</th>
+                                <th><i class="bi bi-gear me-1"></i> Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -47,9 +48,22 @@
                                 <td th:text="${cliente.phoneNumber}"></td>
                                 <td>
                                     <div class="d-flex flex-column flex-md-row gap-2">
-                                        <a th:href="@{'/customers/editar/' + ${cliente.idCustomer}}" class="btn btn-warning btn-sm flex-fill">Editar</a>
-                                        <button type="button" class="btn btn-danger btn-sm flex-fill" data-bs-toggle="modal" data-bs-target="#deleteModal" th:attrappend="data-customer-id=${cliente.idCustomer},data-customer-name=${cliente.name}">Borrar</button>
+                                        <a th:href="@{'/customers/editar/' + ${cliente.idCustomer}}" class="btn btn-warning btn-sm flex-fill">
+                                            <i class="bi bi-pencil-square me-1"></i> Editar
+                                        </a>
+                                        <button type="button" class="btn btn-danger btn-sm flex-fill" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#deleteModal" 
+                                                th:attrappend="data-customer-id=${cliente.idCustomer},data-customer-name=${cliente.name}">
+                                            <i class="bi bi-trash me-1"></i> Borrar
+                                        </button>
                                     </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${clientes == null || clientes.isEmpty()}">
+                                <td colspan="6" class="text-center">
+                                    <i class="bi bi-exclamation-circle text-warning me-2" style="font-size: 1.5rem;"></i>
+                                    No hay clientes registrados
                                 </td>
                             </tr>
                         </tbody>
@@ -62,15 +76,15 @@
 		  <div class="modal-dialog">
 		    <div class="modal-content">
 		      <div class="modal-header">
-		        <h5 class="modal-title" id="deleteModalLabel">Confirmar borrado</h5>
+		        <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Confirmar borrado</h5>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
-		        ¿Estás seguro de que deseas borrar al cliente <span id="clienteName"></span>?
+		        <i class="bi bi-question-circle me-2"></i>¿Estás seguro de que deseas borrar al cliente <span id="clienteName"></span>?
 		      </div>
 		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-		        <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Borrar</a>
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-2"></i>Cancelar</button>
+		        <a id="confirmDeleteBtn" href="#" class="btn btn-danger"><i class="bi bi-trash me-2"></i>Borrar</a>
 		      </div>
 		    </div>
 		  </div>

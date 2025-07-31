@@ -104,3 +104,98 @@ footer.main-footer {
     color: #ffffff; /* Blanco al pasar el mouse */
     text-decoration: underline;
 }
+
+/* --- ESTILOS ESPECÍFICOS PARA EL FORMULARIO DE LOGIN --- */
+.login-form-card {
+    border-radius: 1rem; /* Bordes más redondeados para la tarjeta principal */
+    width: 100%;
+    max-width: 400px; /* Ancho máximo para el formulario de login */
+    padding: 0; /* Quita el padding predeterminado de la tarjeta si es necesario */
+}
+
+.login-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.login-icon-container {
+    background-color: black;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%; /* Círculo perfecto */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 1.5rem auto; /* Centrar y margen inferior */
+}
+
+.login-icon {
+    font-size: 2.5rem; /* Tamaño de la letra 'A' */
+    font-weight: bold;
+}
+
+.login-label {
+    text-align: left;
+    display: block; /* Asegura que la etiqueta esté en su propia línea */
+    color: #666; /* Un gris más suave para las etiquetas */
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem; /* Menos espacio entre label y input */
+}
+
+.login-input {
+    border: none; /* Eliminar el borde */
+    border-bottom: 1px solid #ccc; /* Solo un borde inferior */
+    border-radius: 0; /* Eliminar el redondeo de los bordes */
+    padding: 0.5rem 0; /* Padding solo vertical, sin padding horizontal */
+    background-color: transparent; /* Fondo transparente */
+}
+
+.login-input:focus {
+    box-shadow: none; /* Eliminar el box-shadow de Bootstrap por defecto */
+    border-color: #8e2de2; /* Color de enfoque similar al degradado del botón */
+    background-color: transparent; /* Asegurar que el fondo siga transparente */
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 0.5rem; /* Ajustar posición del ojo */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+}
+
+/* Botón con degradado */
+.btn-login-gradient {
+    background-image: linear-gradient(to right, #00c6ff, #0072ff); /* Degradado azul a morado de la imagen */
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 2rem; /* Bordes muy redondeados para el botón */
+    padding: 0.75rem 1.5rem; /* Más padding para que sea más grande */
+    letter-spacing: 0.05em; /* Espaciado entre letras */
+    transition: all 0.3s ease;
+}
+
+.btn-login-gradient:hover {
+    background-image: linear-gradient(to right, #00aaff, #0050cc); /* Degradado más oscuro al pasar el mouse */
+    color: white; /* Asegura que el texto siga blanco al hacer hover */
+    transform: translateY(-2px); /* Pequeño efecto de levantamiento */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.signup-link {
+    color: #8e2de2; /* Color morado para el enlace */
+    font-weight: 500;
+}
+
+.signup-link:hover {
+    color: #4a00e0; /* Morado más oscuro al pasar el mouse */
+    text-decoration: underline !important;
+}
+
+.forgot-password {
+    color: #666; /* Color de texto para el "Don't have an account?" */
+}
