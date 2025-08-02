@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/bootstrap-icons-1.13.1/bootstrap-icons.css}">
+<link rel="stylesheet" th:href="@{/css/estilos.css}">
+<title>Inicio - Pizzeria App</title>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<header data-th-replace="~{fragments/header::header}"></header>
+		</div>
+		
+		<div class="row mb-4 mt-4">
+			<div class="col-md-12">
+				<div class="card shadow-lg">
+					<div class="card-header bg-primary text-white">
+						<h3 class="mb-0">
+							<i class="bi bi-house-door-fill me-2"></i>Bienvenido/a a Pizzeria App
+						</h3>
+					</div>
+					<div class="card-body">
+						<div class="alert alert-info">
+							<p>
+								<i class="bi bi-person-circle me-2"></i>
+								<strong>Usuario:</strong> <span th:text="${username}">usuario</span>
+							</p>
+							<p>
+								<i class="bi bi-shield-lock me-2"></i>
+								<strong>Rol:</strong> <span th:text="${role}">rol</span>
+							</p>
+						</div>
+
+						<h4 class="mt-4 mb-3"><i class="bi bi-card-checklist me-2"></i>Opciones disponibles:</h4>
+
+						<div class="row">
+							<!-- Opciones para todos los usuarios -->
+							<div class="col-md-4 mb-3">
+								<div class="card h-100">
+									<div class="card-header bg-success text-white">
+										<i class="bi bi-list me-2"></i>Visualizar
+									</div>
+									<div class="card-body">
+										<p>Accede a las listas de clientes y pizzas disponibles.</p>
+										<div class="d-grid gap-2">
+											<a th:href="@{/customers/lista}" class="btn btn-outline-primary">
+												<i class="bi bi-people me-2"></i>Ver Clientes
+											</a>
+											<a th:href="@{/pizzas/lista}" class="btn btn-outline-primary">
+												<i class="bi bi-grid-3x3 me-2"></i>Ver Pizzas
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Opciones para operadores y admin -->
+							<div class="col-md-4 mb-3" sec:authorize="hasAnyRole('OPERADOR', 'ADMIN')">
+								<div class="card h-100">
+									<div class="card-header bg-warning text-dark">
+										<i class="bi bi-gear me-2"></i>Operaciones
+									</div>
+									<div class="card-body">
+										<p>Gestiona pedidos y clientes.</p>
+										<div class="d-grid gap-2">
+											<a th:href="@{/customers/nuevo}" class="btn btn-outline-primary">
+												<i class="bi bi-person-plus me-2"></i>Nuevo Cliente
+											</a>
+											<a th:href="@{/orders/nuevo}" class="btn btn-outline-primary">
+												<i class="bi bi-basket me-2"></i>Nuevo Pedido
+											</a>
+											<a th:href="@{/orders/lista}" class="btn btn-outline-primary">
+												<i class="bi bi-card-list me-2"></i>Ver Pedidos
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Opciones solo para admin -->
+							<div class="col-md-4 mb-3" sec:authorize="hasRole('ADMIN')">
+								<div class="card h-100">
+									<div class="card-header bg-danger text-white">
+										<i class="bi bi-shield-lock me-2"></i>Administración
+									</div>
+									<div class="card-body">
+										<p>Administra el catálogo de pizzas.</p>
+										<div class="d-grid gap-2">
+											<a th:href="@{/pizzas/nuevo}" class="btn btn-outline-primary">
+												<i class="bi bi-plus-circle me-2"></i>Nueva Pizza
+											</a>
+											<a th:href="@{/admin/dashboard}" class="btn btn-outline-primary">
+												<i class="bi bi-speedometer me-2"></i>Panel de Control
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<footer data-th-replace="~{fragments/footer::footer}"></footer>
+	</div>
+<script data-th-src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package ar.edu.unju.fi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,10 +26,11 @@ public class PizzaController {
     private IPizzaService pizzaService;
     /**
 	 * Muestra el listado de pizzas.
+	 * Accesible para cualquier usuario autenticado
 	 * @param model El modelo para pasar datos a la vista.
 	 * @return El nombre de la vista que muestra el listado de pizzas.
 	 */
-    
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/lista") // Cambiado a /list para coherencia con el navbar
     public String getListadoPizzasPage(Model model) {
         model.addAttribute("pizzas", pizzaService.findAll());
@@ -37,9 +39,11 @@ public class PizzaController {
     }
 	/**
 	 * Muestra el formulario para crear una nueva pizza.
+	 * Accesible solo para ADMIN
 	 * @param model El modelo para pasar datos a la vista.
 	 * @return El nombre de la vista que muestra el formulario para crear una nueva pizza.
 	 */
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/nuevo")
     public String getNuevaPizzaPage(Model model) {
         model.addAttribute("pizza", new PizzaDTO() ); // Inicializa un nuevo objeto PizzaDTO
@@ -50,11 +54,13 @@ public class PizzaController {
 
     /**
      * Guarda una nueva pizza o actualiza una existente.
-     * @param pizza El objeto PizzaDTO que contiene los datos de la pizza a guardar.
-     * @param bindingResult Para manejar errores de validación.
-     * @param model El modelo para pasar datos a la vista en caso de errores.
-     * @return Redirige a la lista de pizzas si la validación es exitosa, o vuelve al formulario con errores si hay problemas de validación.
+     * Accesible solo para ADMIN
+     * @param pizza La pizza a guardar.
+     * @param bindingResult Resultados de la validación.
+     * @param model El modelo para pasar datos a la vista.
+     * @return Redirección a la lista de pizzas o regresa al formulario en caso de errores.
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/guardar")
     public String guardarPizza(@Valid @ModelAttribute("pizza") PizzaDTO pizza,
                                BindingResult bindingResult,
@@ -80,10 +86,12 @@ public class PizzaController {
 
     /**
 	 * Muestra el formulario para editar una pizza existente.
+     * Accesible solo para ADMIN
 	 * @param id El ID de la pizza a editar.
 	 * @param model El modelo para pasar datos a la vista.
 	 * @return El nombre de la vista que muestra el formulario para editar una pizza.
 	 */
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/editar/{id}") // Cambiado a /edit para coherencia
     public String getEditarPizzaPage(@PathVariable("id") Integer id, Model model) {
         PizzaDTO pizzaEncontrada = pizzaService.findById(id);
@@ -100,10 +108,12 @@ public class PizzaController {
     
     /**
 	 * Elimina una pizza por su ID.
+     * Accesible solo para ADMIN
 	 * @param id El ID de la pizza a eliminar.
 	 * @param redirectAttributes Para pasar mensajes flash a la redirección.
 	 * @return Redirige a la lista de pizzas después de eliminar.
 	 */
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/borrar/{id}")
     public String eliminarPizza(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
         pizzaService.deleteById(id);

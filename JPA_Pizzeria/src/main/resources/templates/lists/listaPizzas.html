@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://thymeleaf.org">
+<html lang="es" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +18,8 @@
             <div class="col-12 col-md-8 text-center text-md-start">
 				<h1 class="mb-0"><i class="bi bi-grid-3x3-gap-fill me-2 text-danger"></i>Lista de Pizzas</h1>
 			</div>
-            <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
+            <!-- Botón de agregar pizza solo visible para administradores -->
+            <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0" sec:authorize="hasRole('ADMIN')">
 				<a th:href="@{/pizzas/nuevo}" class="btn btn-success"><i class="bi bi-plus-circle me-2"></i>Agregar Pizza</a>
 			</div>
 		</div>
@@ -38,7 +39,8 @@
                                 <th><i class="bi bi-flower1 me-1"></i> Vegetariana</th>
                                 <th><i class="bi bi-tree me-1"></i> Vegana</th>
                                 <th><i class="bi bi-check-circle me-1"></i> Disponible</th>
-                                <th><i class="bi bi-gear me-1"></i> Acciones</th>
+                                <!-- Columna de acciones solo visible para administradores -->
+                                <th sec:authorize="hasRole('ADMIN')"><i class="bi bi-gear me-1"></i> Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -59,7 +61,8 @@
                                     <span th:if="${pizza.avaible}" class="text-success"><i class="bi bi-check-circle-fill"></i> Sí</span>
                                     <span th:unless="${pizza.avaible}" class="text-danger"><i class="bi bi-x-circle-fill"></i> No</span>
                                 </td>
-                                <td>
+                                <!-- Columna de acciones solo visible para administradores -->
+                                <td sec:authorize="hasRole('ADMIN')">
                                     <div class="d-flex flex-column flex-md-row gap-2">
                                         <a th:href="@{'/pizzas/editar/' + ${pizza.idPizza}}" class="btn btn-warning btn-sm flex-fill">
                                             <i class="bi bi-pencil-square me-1"></i> Editar
@@ -85,7 +88,8 @@
             </div>
         </div>
 
-		<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<!-- Modal de confirmación para borrar solo visible para administradores -->
+		<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true" sec:authorize="hasRole('ADMIN')">
 		  <div class="modal-dialog">
 		    <div class="modal-content">
 		      <div class="modal-header">
@@ -115,7 +119,7 @@
     var pizzaNameSpan = document.getElementById('pizzaName');
     var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
     pizzaNameSpan.textContent = pizzaName;
-    confirmDeleteBtn.href = '/pizzas/borrar/' + pizzaId; // ¡Manteniendo tu ruta original!
+    confirmDeleteBtn.href = '/pizzas/borrar/' + pizzaId;
   });
 </script>
 </body>

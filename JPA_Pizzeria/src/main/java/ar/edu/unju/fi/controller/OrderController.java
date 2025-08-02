@@ -1,6 +1,7 @@
 package ar.edu.unju.fi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,6 +36,11 @@ public class OrderController {
 	@Autowired
 	private IPizzaService pizzaService;
 	
+    /**
+     * Muestra el listado de pedidos
+     * Accesible para ADMIN y OPERADOR
+     */
+	@PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
 	@GetMapping("/lista")
 	public String getListadoPedidosPage(Model model) {
 		model.addAttribute("pedidos", orderService.getAllOrders());
@@ -42,6 +48,11 @@ public class OrderController {
 		return "lists/listaPedidos";
 	}
 	
+    /**
+     * Muestra el formulario para crear un nuevo pedido
+     * Accesible para ADMIN y OPERADOR
+     */
+	@PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
 	@GetMapping("/nuevo")
 	public String getNuevoPedidoPage(Model model) {
 		OrderDTO order = new OrderDTO();
@@ -59,6 +70,11 @@ public class OrderController {
 		return "forms/form-order";
 	}
 
+	/**
+     * Procesa las modificaciones a los ítems del pedido
+     * Accesible para ADMIN y OPERADOR
+     */
+	@PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
 	@PostMapping("/nuevo")
 	public String modificarItems(
 			@ModelAttribute OrderDTO order,
@@ -132,6 +148,11 @@ public class OrderController {
 			return "forms/form-order";
 	}
 	
+    /**
+     * Guarda un nuevo pedido o actualiza uno existente
+     * Accesible para ADMIN y OPERADOR
+     */
+	@PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
 	@PostMapping("/guardar")
 	public String guardarOrder(@ModelAttribute("order") OrderDTO order,
 			BindingResult bindingResult,
@@ -221,6 +242,11 @@ public class OrderController {
 		return "redirect:/orders/lista";
 	}
 
+    /**
+     * Muestra el formulario para editar un pedido existente
+     * Accesible para ADMIN y OPERADOR
+     */
+	@PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
 	@GetMapping("/editar/{id}")
 	public String getEditarOrderPage(@PathVariable("id") Integer id, Model model) {
 		OrderDTO orderEncontrada = orderService.getOrderById(id);
@@ -243,6 +269,11 @@ public class OrderController {
 		return "forms/form-order";
 	}
 
+    /**
+     * Elimina un pedido por su ID
+     * Accesible para ADMIN y OPERADOR
+     */
+	@PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
 	@GetMapping("/borrar/{id}")
 	public String eliminarOrder(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
 		orderService.deleteOrder(id);

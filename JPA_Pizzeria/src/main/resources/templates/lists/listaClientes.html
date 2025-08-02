@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://thymeleaf.org">
+<html lang="es" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +18,8 @@
             <div class="col-12 col-md-8 text-center text-md-start">
 				<h1 class="mb-0"><i class="bi bi-people-fill me-2 text-primary"></i>Lista de Clientes</h1>
 			</div>
-            <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
+            <!-- Botón Agregar Cliente visible para ADMIN y OPERADOR -->
+            <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0" sec:authorize="hasAnyRole('ADMIN', 'OPERADOR')">
 				<a th:href="@{/customers/nuevo}" class="btn btn-success"><i class="bi bi-person-plus-fill me-2"></i>Agregar Cliente</a>
 			</div>
 		</div>
@@ -36,7 +37,8 @@
                                 <th><i class="bi bi-geo-alt me-1"></i> Dirección</th>
                                 <th><i class="bi bi-envelope me-1"></i> Email</th>
                                 <th style="min-width: 120px;"><i class="bi bi-phone me-1"></i> Teléfono</th>
-                                <th><i class="bi bi-gear me-1"></i> Acciones</th>
+                                <!-- Columna de acciones visible para usuarios autenticados -->
+                                <th sec:authorize="isAuthenticated()"><i class="bi bi-gear me-1"></i> Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -46,12 +48,18 @@
                                 <td th:text="${cliente.address}"></td>
                                 <td th:text="${cliente.email}"></td>
                                 <td th:text="${cliente.phoneNumber}"></td>
-                                <td>
+                                <!-- Columna de acciones con permisos por rol -->
+                                <td sec:authorize="isAuthenticated()">
                                     <div class="d-flex flex-column flex-md-row gap-2">
-                                        <a th:href="@{'/customers/editar/' + ${cliente.idCustomer}}" class="btn btn-warning btn-sm flex-fill">
+                                        <!-- Editar visible para ADMIN y OPERADOR -->
+                                        <a sec:authorize="hasAnyRole('ADMIN', 'OPERADOR')" 
+                                           th:href="@{'/customers/editar/' + ${cliente.idCustomer}}" 
+                                           class="btn btn-warning btn-sm flex-fill">
                                             <i class="bi bi-pencil-square me-1"></i> Editar
                                         </a>
-                                        <button type="button" class="btn btn-danger btn-sm flex-fill" 
+                                        <!-- Borrar solo visible para ADMIN -->
+                                        <button sec:authorize="hasRole('ADMIN')" 
+                                                type="button" class="btn btn-danger btn-sm flex-fill" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#deleteModal" 
                                                 th:attrappend="data-customer-id=${cliente.idCustomer},data-customer-name=${cliente.name}">
@@ -72,7 +80,8 @@
             </div>
         </div>
 
-		<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<!-- Modal de confirmación para borrar solo visible para ADMIN -->
+		<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true" sec:authorize="hasRole('ADMIN')">
 		  <div class="modal-dialog">
 		    <div class="modal-content">
 		      <div class="modal-header">

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/bootstrap-icons-1.13.1/bootstrap-icons.css}">
+<link rel="stylesheet" th:href="@{/css/estilos.css}">
+<title>Panel de Administración - Pizzeria App</title>
+<style>
+    .stat-card {
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .stat-icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+    .chart-container {
+        height: 300px;
+        margin-bottom: 20px;
+    }
+    .table-responsive {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .period-selector .btn-check:checked + .btn-outline-primary {
+        background-color: #0d6efd;
+        color: white;
+    }
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<header data-th-replace="~{fragments/header::header}"></header>
+		</div>
+		
+		<div class="row mb-4 mt-4">
+			<div class="col-12">
+				<div class="card shadow-lg">
+					<div class="card-header bg-danger text-white">
+						<div class="d-flex justify-content-between align-items-center">
+							<h3 class="mb-0">
+								<i class="bi bi-speedometer2 me-2"></i>Panel de Administración
+							</h3>
+							<div class="period-selector btn-group" role="group" aria-label="Selector de período">
+								<input type="radio" class="btn-check" name="period" id="period-day" value="day" autocomplete="off" th:checked="${param.period == null || param.period[0] == 'day'}">
+								<label class="btn btn-outline-light" for="period-day">Hoy</label>
+								
+								<input type="radio" class="btn-check" name="period" id="period-week" value="week" autocomplete="off" th:checked="${param.period != null && param.period[0] == 'week'}">
+								<label class="btn btn-outline-light" for="period-week">Semana</label>
+								
+								<input type="radio" class="btn-check" name="period" id="period-month" value="month" autocomplete="off" th:checked="${param.period != null && param.period[0] == 'month'}">
+								<label class="btn btn-outline-light" for="period-month">Mes</label>
+							</div>
+						</div>
+					</div>
+					<div class="card-body p-4">
+						<!-- Tarjetas de estadísticas generales -->
+						<div class="row mb-4">
+							<div class="col-md-3 mb-3">
+								<div class="card bg-primary text-white stat-card">
+									<div class="card-body d-flex align-items-center">
+										<div class="stat-icon me-3">
+											<i class="bi bi-cart-check"></i>
+										</div>
+										<div>
+											<h6 class="card-subtitle mb-1">Total de Pedidos</h6>
+											<h2 class="card-title mb-0" th:text="${totalOrders}">42</h2>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3 mb-3">
+								<div class="card bg-success text-white stat-card">
+									<div class="card-body d-flex align-items-center">
+										<div class="stat-icon me-3">
+											<i class="bi bi-cash-coin"></i>
+										</div>
+										<div>
+											<h6 class="card-subtitle mb-1">Ingresos Totales</h6>
+											<h2 class="card-title mb-0">$<span th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 2, 'POINT')}">12,345.00</span></h2>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3 mb-3">
+								<div class="card bg-info text-white stat-card">
+									<div class="card-body d-flex align-items-center">
+										<div class="stat-icon me-3">
+											<i class="bi bi-people"></i>
+										</div>
+										<div>
+											<h6 class="card-subtitle mb-1">Clientes Activos</h6>
+											<h2 class="card-title mb-0" th:text="${activeCustomers}">18</h2>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3 mb-3">
+								<div class="card bg-warning text-dark stat-card">
+									<div class="card-body d-flex align-items-center">
+										<div class="stat-icon me-3">
+											<i class="bi bi-currency-dollar"></i>
+										</div>
+										<div>
+											<h6 class="card-subtitle mb-1">Valor Promedio</h6>
+											<h2 class="card-title mb-0">$<span th:text="${#numbers.formatDecimal(averageOrderValue, 0, 'COMMA', 2, 'POINT')}">294.00</span></h2>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row mb-4">
+							<!-- Gráfico de ventas por día/semana/mes -->
+							<div class="col-lg-8 mb-4">
+								<div class="card shadow-sm h-100">
+									<div class="card-header bg-light">
+										<h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Tendencia de Ventas</h5>
+									</div>
+									<div class="card-body">
+										<div class="chart-container">
+											<!-- Aquí se insertaría un gráfico con JavaScript -->
+											<canvas id="salesChart"></canvas>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Métodos de pago -->
+							<div class="col-lg-4 mb-4">
+								<div class="card shadow-sm h-100">
+									<div class="card-header bg-light">
+										<h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>Métodos de Pago</h5>
+									</div>
+									<div class="card-body">
+										<div class="chart-container">
+											<canvas id="paymentMethodChart"></canvas>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<!-- Pizzas más vendidas -->
+							<div class="col-lg-6 mb-4">
+								<div class="card shadow-sm h-100">
+									<div class="card-header bg-light d-flex justify-content-between align-items-center">
+										<h5 class="mb-0"><i class="bi bi-star me-2"></i>Pizzas Más Vendidas</h5>
+										<button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#topPizzasCollapse">
+											Ver Más
+										</button>
+									</div>
+									<div class="collapse show" id="topPizzasCollapse">
+										<div class="card-body">
+											<div class="table-responsive">
+												<table class="table table-hover">
+													<thead>
+														<tr>
+															<th scope="col">#</th>
+															<th scope="col">Pizza</th>
+															<th scope="col">Cantidad</th>
+															<th scope="col">Ingresos</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr th:each="pizza, iterStat : ${topPizzas}">
+															<th scope="row" th:text="${iterStat.count}">1</th>
+															<td>
+																<span class="fw-bold" th:text="${pizza.name}">Pepperoni</span>
+															</td>
+															<td th:text="${pizza.quantity}">42</td>
+															<td>$<span th:text="${#numbers.formatDecimal(pizza.revenue, 0, 'COMMA', 2, 'POINT')}">1,260.00</span></td>
+														</tr>
+														<!-- Si no hay datos -->
+														<tr th:if="${#lists.isEmpty(topPizzas)}">
+															<td colspan="4" class="text-center">No hay datos disponibles</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Clientes más frecuentes -->
+							<div class="col-lg-6 mb-4">
+								<div class="card shadow-sm h-100">
+									<div class="card-header bg-light d-flex justify-content-between align-items-center">
+										<h5 class="mb-0"><i class="bi bi-person-check me-2"></i>Clientes Más Frecuentes</h5>
+										<button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#topCustomersCollapse">
+											Ver Más
+										</button>
+									</div>
+									<div class="collapse show" id="topCustomersCollapse">
+										<div class="card-body">
+											<div class="table-responsive">
+												<table class="table table-hover">
+													<thead>
+														<tr>
+															<th scope="col">#</th>
+															<th scope="col">Cliente</th>
+															<th scope="col">Pedidos</th>
+															<th scope="col">Total Gastado</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr th:each="customer, iterStat : ${topCustomers}">
+															<th scope="row" th:text="${iterStat.count}">1</th>
+															<td>
+																<span class="fw-bold" th:text="${customer.name}">Juan Pérez</span>
+																<br><small th:text="${customer.email}">juan@example.com</small>
+															</td>
+															<td th:text="${customer.orderCount}">8</td>
+															<td>$<span th:text="${#numbers.formatDecimal(customer.totalSpent, 0, 'COMMA', 2, 'POINT')}">2,450.00</span></td>
+														</tr>
+														<!-- Si no hay datos -->
+														<tr th:if="${#lists.isEmpty(topCustomers)}">
+															<td colspan="4" class="text-center">No hay datos disponibles</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Nueva sección: Gestión de Usuarios del Sistema -->
+		<div class="row mb-4">
+			<div class="col-12">
+				<div class="card shadow-lg">
+					<div class="card-header bg-dark text-white">
+						<div class="d-flex justify-content-between align-items-center">
+							<h3 class="mb-0">
+								<i class="bi bi-people-fill me-2"></i>Gestión de Usuarios del Sistema
+							</h3>
+						</div>
+					</div>
+					<div class="card-body p-4">
+						<div class="row">
+							<div class="col-md-8">
+								<!-- Tabla de usuarios existentes -->
+								<div class="card shadow-sm h-100 mb-4 mb-md-0">
+									<div class="card-header bg-light d-flex justify-content-between align-items-center">
+										<h5 class="mb-0"><i class="bi bi-list-check me-2"></i>Usuarios Existentes</h5>
+										<button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#usersListCollapse">
+											Ver Más
+										</button>
+									</div>
+									<div class="collapse show" id="usersListCollapse">
+										<div class="card-body">
+											<div class="table-responsive">
+												<table class="table table-hover">
+													<thead>
+														<tr>
+															<th scope="col">#</th>
+															<th scope="col">Usuario</th>
+															<th scope="col">Email</th>
+															<th scope="col">Rol</th>
+															<th scope="col">Estado</th>
+															<th scope="col">Acciones</th>
+														</tr>
+													</thead>
+													<tbody>
+														<!-- Esta sección se llenaría dinámicamente con datos del backend -->
+														<tr>
+															<th scope="row">1</th>
+															<td>
+																<span class="fw-bold">admin</span>
+															</td>
+															<td>admin@pizzeria.com</td>
+															<td><span class="badge bg-danger">ADMIN</span></td>
+															<td><span class="badge bg-success">Activo</span></td>
+															<td>
+																<div class="btn-group btn-group-sm" role="group">
+																	<a href="#" class="btn btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+																	<a href="#" class="btn btn-outline-danger" title="Desactivar"><i class="bi bi-person-x"></i></a>
+																</div>
+															</td>
+														</tr>
+														<tr>
+															<th scope="row">2</th>
+															<td>
+																<span class="fw-bold">operador1</span>
+															</td>
+															<td>operador1@pizzeria.com</td>
+															<td><span class="badge bg-primary">OPERADOR</span></td>
+															<td><span class="badge bg-success">Activo</span></td>
+															<td>
+																<div class="btn-group btn-group-sm" role="group">
+																	<a href="#" class="btn btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+																	<a href="#" class="btn btn-outline-danger" title="Desactivar"><i class="bi bi-person-x"></i></a>
+																</div>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<!-- Panel de acciones de usuarios -->
+								<div class="card shadow-sm h-100">
+									<div class="card-header bg-light">
+										<h5 class="mb-0"><i class="bi bi-gear-fill me-2"></i>Acciones de Usuarios</h5>
+									</div>
+									<div class="card-body">
+										<div class="d-grid gap-3">
+											<a href="/admin/users/new" class="btn btn-success">
+												<i class="bi bi-person-plus-fill me-2"></i>Agregar Nuevo Usuario
+											</a>
+											<a href="/admin/users/roles" class="btn btn-primary">
+												<i class="bi bi-shield-lock me-2"></i>Modificar Permisos
+											</a>
+											<a href="/admin/users/inactive" class="btn btn-warning">
+												<i class="bi bi-person-dash-fill me-2"></i>Ver Usuarios Inactivos
+											</a>
+											<div class="card mt-3 bg-light">
+												<div class="card-body">
+													<h6 class="card-subtitle mb-2 text-muted">Acciones rápidas</h6>
+													<p class="card-text small">Gestione los usuarios del sistema, asigne roles y permisos, y controle el acceso al sistema.</p>
+													<div class="form-check form-switch">
+														<input class="form-check-input" type="checkbox" id="registroAbierto">
+														<label class="form-check-label" for="registroAbierto">Registro público abierto</label>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<footer data-th-replace="~{fragments/footer::footer}"></footer>
+	</div>
+
+	<!-- Scripts necesarios -->
+	<script data-th-src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	
+	<!-- Script para los gráficos -->
+	<script th:inline="javascript">
+		// Datos para los gráficos provenientes del controlador
+		const salesData = /*[[${salesData}]]*/ [];
+		const paymentMethodData = /*[[${paymentMethods}]]*/ [];
+		
+		// Configuración de gráficos
+		document.addEventListener('DOMContentLoaded', function() {
+			// Gráfico de ventas
+			const salesChart = new Chart(
+				document.getElementById('salesChart'),
+				{
+					type: 'line',
+					data: {
+						labels: salesData.map(data => data.label),
+						datasets: [{
+							label: 'Ventas',
+							data: salesData.map(data => data.value),
+							fill: false,
+							borderColor: 'rgb(75, 192, 192)',
+							tension: 0.1
+						}]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						scales: {
+							y: {
+								beginAtZero: true
+							}
+						}
+					}
+				}
+			);
+			
+			// Gráfico de métodos de pago
+			const paymentChart = new Chart(
+				document.getElementById('paymentMethodChart'),
+				{
+					type: 'doughnut',
+					data: {
+						labels: paymentMethodData.map(data => data.name),
+						datasets: [{
+							data: paymentMethodData.map(data => data.count),
+							backgroundColor: [
+								'rgb(255, 99, 132)',
+								'rgb(54, 162, 235)',
+								'rgb(255, 206, 86)',
+								'rgb(75, 192, 192)',
+								'rgb(153, 102, 255)'
+							]
+						}]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false
+					}
+				}
+			);
+			
+			// Manejar cambios en el período seleccionado
+			document.querySelectorAll('input[name="period"]').forEach(input => {
+				input.addEventListener('change', function() {
+					// Aquí se enviaría una petición para actualizar los datos según el período
+					const period = this.value;
+					window.location.href = '/admin/dashboard?period=' + period;
+				});
+			});
+		});
+	</script>
+</body>
+</html>

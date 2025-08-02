@@ -6,13 +6,10 @@
 <link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
 <link rel="stylesheet" th:href="@{/bootstrap-icons-1.13.1/bootstrap-icons.css}">
 <link rel="stylesheet" th:href="@{/css/estilos.css}">
-<title>Inicio</title>
+<title>Login - Pizzeria App</title>
 </head>
 <body>
 	<div class="container">
-		<div class="row">
-			<header data-th-replace="~{fragments/header::header}"></header>
-		</div>
 		<div class="d-flex justify-content-center align-items-center min-vh-100 bg-light"> 
 		    <div class="card shadow-lg p-0 login-form-card">
 		        <div class="card-body p-4 text-center">
@@ -21,20 +18,32 @@
                         <i class="bi bi-shop text-primary" style="font-size: 3rem;"></i>
                     </div>
 
-                    <form>
+                    <!-- Mensaje de error de autenticación -->
+                    <div th:if="${param.error}" class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Usuario o contraseña incorrectos
+                    </div>
+                    
+                    <!-- Mensaje de cierre de sesión exitoso -->
+                    <div th:if="${param.logout}" class="alert alert-success">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Has cerrado sesión correctamente
+                    </div>
+
+                    <form th:action="@{/login}" method="post">
                         <div class="mb-4">
-                            <label for="email" class="form-label login-label">Email</label>
+                            <label for="username" class="form-label login-label">Usuario</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                <input type="email" id="email" class="form-control login-input" placeholder="johndoe@example.com">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" id="username" name="username" class="form-control login-input" placeholder="admin o operador" required autofocus>
                             </div>
                         </div>
 
                         <div class="mb-5 position-relative">
-                            <label for="password" class="form-label login-label">Password</label>
+                            <label for="password" class="form-label login-label">Contraseña</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                <input type="password" id="password" class="form-control login-input" placeholder="Contraseña">
+                                <input type="password" id="password" name="password" class="form-control login-input" placeholder="Contraseña" required>
                                 <span class="input-group-text" style="cursor:pointer;" onclick="togglePassword()">
                                     <i id="toggleIcon" class="bi bi-eye"></i>
                                 </span>
@@ -47,6 +56,12 @@
                             </button>
                         </div>
                     </form>
+                    
+                    <div class="mt-3 text-muted">
+                        <small>Credenciales disponibles:</small><br>
+                        <small>Admin: admin / adminpass</small><br>
+                        <small>Operador: operador / operadorpass</small>
+                    </div>
                 </div>
 		    </div>
 		</div>
