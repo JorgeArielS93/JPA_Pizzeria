@@ -1,37 +1,53 @@
-<header class="section-dark-bg main-header text-center" th:fragment="header">
+<header class="section-dark-bg main-header text-center" th:fragment="header" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <h1><i class="bi bi-shop-window me-2 text-warning"></i>Facultad de Ingeniería - Gestión Pizzería</h1>
 
-    <p class="university-motto">“Flammam Tvam Hoc Foco Accende”</p>
+    <p class="university-motto">"Flammam Tvam Hoc Foco Accende"</p>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mt-3">
         <div class="container-fluid">
-            <a class="navbar-brand" th:href="@{/principal/home}"><i class="bi bi-shop me-2"></i>Pizzeria App</a>
+            <a class="navbar-brand" th:href="@{/home}"><i class="bi bi-shop me-2"></i>Pizzeria App</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                <ul class="navbar-nav">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Menú izquierdo - solo visible para usuarios autenticados -->
+                <ul class="navbar-nav me-auto" sec:authorize="isAuthenticated()">
+                    <!-- Sección de Clientes - visible para todos los autenticados -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarCustomersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-people me-2"></i>Clientes
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarCustomersDropdown">
-                            <li><a class="dropdown-item" th:href="@{/customers/nuevo}"><i class="bi bi-person-plus me-2"></i>Agregar Cliente</a></li>
-                            <li><a class="dropdown-item" th:href="@{/customers/lista}"><i class="bi bi-list-ul me-2"></i>Ver Clientes</a></li>
+                            <!-- Agregar cliente - solo para ADMIN y OPERADOR -->
+                            <li sec:authorize="hasAnyRole('ADMIN', 'OPERADOR')">
+                                <a class="dropdown-item" th:href="@{/customers/nuevo}"><i class="bi bi-person-plus me-2"></i>Agregar Cliente</a>
+                            </li>
+                            <!-- Ver clientes - para todos los autenticados -->
+                            <li>
+                                <a class="dropdown-item" th:href="@{/customers/lista}"><i class="bi bi-list-ul me-2"></i>Ver Clientes</a>
+                            </li>
                         </ul>
                     </li>
 
+                    <!-- Sección de Pizzas - visible para todos los autenticados -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarPizzasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-circle-square me-2"></i>Pizzas
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarPizzasDropdown">
-                            <li><a class="dropdown-item" th:href="@{/pizzas/nuevo}"><i class="bi bi-plus-circle me-2"></i>Agregar Pizza</a></li>
-                            <li><a class="dropdown-item" th:href="@{/pizzas/lista}"><i class="bi bi-grid me-2"></i>Ver Pizzas</a></li>
+                            <!-- Agregar pizza - solo para ADMIN -->
+                            <li sec:authorize="hasRole('ADMIN')">
+                                <a class="dropdown-item" th:href="@{/pizzas/nuevo}"><i class="bi bi-plus-circle me-2"></i>Agregar Pizza</a>
+                            </li>
+                            <!-- Ver pizzas - para todos los autenticados -->
+                            <li>
+                                <a class="dropdown-item" th:href="@{/pizzas/lista}"><i class="bi bi-grid me-2"></i>Ver Pizzas</a>
+                            </li>
                         </ul>
                     </li>
 
-                    <li class="nav-item dropdown">
+                    <!-- Sección de Órdenes - visible solo para ADMIN y OPERADOR -->
+                    <li class="nav-item dropdown" sec:authorize="hasAnyRole('ADMIN', 'OPERADOR')">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarOrdersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-basket me-2"></i>Órdenes
                         </a>
@@ -40,7 +56,46 @@
                             <li><a class="dropdown-item" th:href="@{/orders/lista}"><i class="bi bi-list-check me-2"></i>Ver Órdenes</a></li>
                         </ul>
                     </li>
+                    
+                    <!-- Sección de Admin - visible solo para ADMIN -->
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2 me-2"></i>Panel Admin</a>
+                    </li>
                 </ul>
+                
+                <!-- Sección derecha - Información de usuario y logout -->
+                <div class="navbar-nav ms-auto">
+                    <!-- Usuario autenticado - mostrar nombre y botón de logout -->
+                    <div class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-1"></i>
+                            <span sec:authentication="name">Usuario</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarUserDropdown">
+                            <li>
+                                <span class="dropdown-item-text">
+                                    <i class="bi bi-shield-lock me-2"></i>Rol: 
+                                    <span class="badge bg-primary" th:text="${#authorization.expression('hasRole(''ADMIN'')') ? 'Administrador' : (#authorization.expression('hasRole(''OPERADOR'')') ? 'Operador' : 'Usuario')}">Rol</span>
+                                </span>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="dropdown-item">
+                                    <button type="submit" class="btn btn-link text-white p-0">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Usuario no autenticado - mostrar botón de login -->
+                    <div class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" th:href="@{/login}">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>

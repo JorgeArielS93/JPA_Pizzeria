@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" data-th-href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/bootstrap-icons-1.13.1/bootstrap-icons.css}">
+<link rel="stylesheet" th:href="@{/css/estilos.css}">
+<title>Gestión de Usuarios - Pizzeria App</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <header data-th-replace="~{fragments/header::header}"></header>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Usuarios</li>
+                    </ol>
+                </nav>
+
+                <div class="card shadow-lg">
+                    <div class="card-header bg-dark text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0">
+                                <i class="bi bi-people-fill me-2"></i><span th:text="${titulo}">Gestión de Usuarios</span>
+                            </h3>
+                            <div>
+                                <a th:href="@{/admin/users}" class="btn btn-outline-light me-2">
+                                    <i class="bi bi-person-check me-1"></i>Usuarios Activos
+                                </a>
+                                <a th:href="@{/admin/users/inactive}" class="btn btn-outline-light me-2">
+                                    <i class="bi bi-person-dash me-1"></i>Usuarios Inactivos
+                                </a>
+                                <a th:href="@{/admin/users/new}" class="btn btn-success">
+                                    <i class="bi bi-person-plus me-1"></i>Nuevo Usuario
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Mensajes de alerta -->
+                        <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${mensaje}">Mensaje de éxito</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                        </div>
+
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}">Mensaje de error</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                        </div>
+
+                        <!-- Tabla de usuarios -->
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Usuario</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Roles</th>
+                                        <th scope="col">Última modificación</th>
+                                        <th scope="col">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="usuario, iter : ${usuarios}">
+                                        <th scope="row" th:text="${iter.count}">1</th>
+                                        <td>
+                                            <span class="fw-bold" th:text="${usuario.username}">username</span>
+                                        </td>
+                                        <td th:text="${usuario.nombre + ' ' + usuario.apellido}">Nombre Apellido</td>
+                                        <td th:text="${usuario.email}">email@example.com</td>
+                                        <td>
+                                            <span th:each="rol, iterStat : ${usuario.roles}" 
+                                                  th:class="${rol == 'ADMIN' ? 'badge bg-danger me-1' : 'badge bg-primary me-1'}" 
+                                                  th:text="${rol}">ROL</span>
+                                        </td>
+                                        <td th:text="${#temporals.format(usuario.ultimaModificacion, 'dd/MM/yyyy HH:mm')}">
+                                            01/01/2025 12:00
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a th:href="@{'/admin/users/edit/' + ${usuario.id}}" class="btn btn-outline-primary" 
+                                                   title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a th:href="@{'/admin/users/toggle/' + ${usuario.id}}" 
+                                                   th:class="${usuario.activo ? 'btn btn-outline-danger' : 'btn btn-outline-success'}" 
+                                                   th:title="${usuario.activo ? 'Desactivar' : 'Activar'}">
+                                                    <i th:class="${usuario.activo ? 'bi bi-person-x' : 'bi bi-person-check'}"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(usuarios)}">
+                                        <td colspan="7" class="text-center">No hay usuarios registrados</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer data-th-replace="~{fragments/footer::footer}"></footer>
+    </div>
+
+    <script data-th-src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

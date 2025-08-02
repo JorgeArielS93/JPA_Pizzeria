@@ -1,6 +1,7 @@
 package ar.edu.unju.fi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +23,11 @@ public class CustomerController {
 	@Autowired
 	private ICustomerService customerService;
 	
+	/**
+	 * Método que muestra la lista de clientes
+	 * Accesible para cualquier usuario autenticado
+	 */
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/lista")
 	public String getListadoClientesPage(Model model) {
 		model.addAttribute("clientes", customerService.findAll());
@@ -29,6 +35,11 @@ public class CustomerController {
 		return "lists/listaClientes"; // Devuelve el nombre de la vista html
 	}
 
+	/**
+	 * Método que muestra el formulario para crear un nuevo cliente
+	 * Accesible solo para ADMIN y OPERADOR
+	 */
+	@PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
 	@GetMapping("/nuevo")
 	public String getNuevoClientePage(Model model) {
 		model.addAttribute("cliente", new CustomerDTO());
@@ -37,6 +48,11 @@ public class CustomerController {
 		return "forms/form-cliente";
 	}
 
+	/**
+	 * Método que guarda un cliente nuevo o modificado
+	 * Accesible solo para ADMIN y OPERADOR
+	 */
+	@PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
 	@PostMapping("/guardar")
 	public String saveCliente(@Valid @ModelAttribute("cliente") CustomerDTO cliente, BindingResult bindingResult, Model model) {
 		boolean isEdit = cliente.getIdCustomer() != null;
@@ -61,6 +77,11 @@ public class CustomerController {
 		return "redirect:/customers/lista";
 	}
 	
+	/**
+	 * Método que muestra el formulario para editar un cliente existente
+	 * Accesible solo para ADMIN y OPERADOR
+	 */
+	@PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
 	@GetMapping("/editar/{id}")
     public String getEditarClientePage(@PathVariable(value="id") Integer id, Model model) {
         CustomerDTO foundCustomer = customerService.findById(id);
@@ -73,6 +94,12 @@ public class CustomerController {
         log.info("INFO - Mostrando formulario para editar cliente con ID: {}", id);
         return "forms/form-cliente";
     }
+	
+	/**
+	 * Método que elimina un cliente por su ID
+	 * Accesible solo para ADMIN
+	 */
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/borrar/{id}")
 	public String deleteCliente(@PathVariable(value="id") Integer id) {
 		CustomerDTO foundCustomer = customerService.findById(id);
