@@ -69,4 +69,81 @@ public class PizzaServiceImp implements IPizzaService {
         // Llama directamente al método del repositorio para eliminar por ID
         pizzaRepository.deleteById(id);
     }
+    
+    @Override
+    public List<PizzaDTO> findByNameContaining(String name) {
+        log.info("Buscando pizzas con nombre que contiene: {}", name);
+        List<PizzaEntity> entities = pizzaRepository.findByNameContainingIgnoreCase(name);
+        return pizzaMapDTO.listPizzaToListPizzaDTO(entities);
+    }
+
+    @Override
+    public List<PizzaDTO> findByDescriptionContaining(String description) {
+        log.info("Buscando pizzas con descripción que contiene: {}", description);
+        List<PizzaEntity> entities = pizzaRepository.findByDescriptionContainingIgnoreCase(description);
+        return pizzaMapDTO.listPizzaToListPizzaDTO(entities);
+    }
+    
+    @Override
+    public List<PizzaDTO> findByPriceContaining(String priceText) {
+        log.info("Buscando pizzas con precio que contiene: {}", priceText);
+        List<PizzaEntity> entities = pizzaRepository.findByPriceContaining(priceText);
+        return pizzaMapDTO.listPizzaToListPizzaDTO(entities);
+    }
+
+    @Override
+    public List<PizzaDTO> findByPriceBetween(Double minPrice, Double maxPrice) {
+        log.info("Buscando pizzas con precio entre {} y {}", minPrice, maxPrice);
+        List<PizzaEntity> entities = pizzaRepository.findByPriceBetween(minPrice, maxPrice);
+        return pizzaMapDTO.listPizzaToListPizzaDTO(entities);
+    }
+
+    @Override
+    public List<PizzaDTO> findByPriceLessThanEqual(Double maxPrice) {
+        log.info("Buscando pizzas con precio menor o igual a: {}", maxPrice);
+        List<PizzaEntity> entities = pizzaRepository.findByPriceLessThanEqual(maxPrice);
+        return pizzaMapDTO.listPizzaToListPizzaDTO(entities);
+    }
+
+    @Override
+    public List<PizzaDTO> findByPriceGreaterThanEqual(Double minPrice) {
+        log.info("Buscando pizzas con precio mayor o igual a: {}", minPrice);
+        List<PizzaEntity> entities = pizzaRepository.findByPriceGreaterThanEqual(minPrice);
+        return pizzaMapDTO.listPizzaToListPizzaDTO(entities);
+    }
+
+    @Override
+    public List<PizzaDTO> findByAnyField(String searchTerm) {
+        log.info("Buscando pizzas con término en cualquier campo: {}", searchTerm);
+        List<PizzaEntity> entities = pizzaRepository.findByAnyField(searchTerm);
+        return pizzaMapDTO.listPizzaToListPizzaDTO(entities);
+    }
+
+    @Override
+    public List<PizzaDTO> filterPizzas(String searchTerm, String field) {
+        log.info("Filtrando pizzas por campo: {} con término: {}", field, searchTerm);
+        
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return findAll();
+        }
+        
+        switch (field) {
+            case "name":
+                return findByNameContaining(searchTerm);
+            case "description":
+                return findByDescriptionContaining(searchTerm);
+            case "price":
+                try {
+                    // Intentar parsear como número para búsquedas exactas de precio
+                    Double price = Double.parseDouble(searchTerm);
+                    return findByPriceContaining(searchTerm);
+                } catch (NumberFormatException e) {
+                    // Si no se puede parsear, buscar coincidencias parciales en texto
+                    return findByPriceContaining(searchTerm);
+                }
+            case "all":
+            default:
+                return findByAnyField(searchTerm);
+        }
+    }
 }

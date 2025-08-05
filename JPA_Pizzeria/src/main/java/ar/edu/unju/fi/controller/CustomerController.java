@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ar.edu.unju.fi.dto.CustomerDTO;
 import ar.edu.unju.fi.service.ICustomerService;
@@ -29,9 +30,21 @@ public class CustomerController {
 	 */
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/lista")
-	public String getListadoClientesPage(Model model) {
-		model.addAttribute("clientes", customerService.findAll());
-		log.info("INFO - Mostrando listado de clientes en /clientes/listado");
+	public String getListadoClientesPage(
+		@RequestParam(name = "searchTerm", required = false) String searchTerm,
+        @RequestParam(name = "field", required = false, defaultValue = "all") String field,
+		Model model) {
+        
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+            log.info("INFO - Filtrando clientes por campo '{}' con término '{}'", field, searchTerm);
+            model.addAttribute("clientes", customerService.filterCustomers(searchTerm, field));
+            model.addAttribute("searchTerm", searchTerm);
+            model.addAttribute("field", field);
+        } else {
+            log.info("INFO - Mostrando listado completo de clientes en /customers/lista");
+            model.addAttribute("clientes", customerService.findAll());
+        }
+        
 		return "lists/listaClientes"; // Devuelve el nombre de la vista html
 	}
 

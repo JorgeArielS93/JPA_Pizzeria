@@ -30,6 +30,8 @@
                 
                 <form th:action="@{/orders/nuevo}" th:object="${order}" method="post">
                     <input type="hidden" th:field="*{idOrder}" />
+                    <!-- Campo oculto para el estado de pago, siempre PENDIENTE para nuevas órdenes -->
+                    <input type="hidden" th:field="*{estadoPago}" th:value="${T(ar.edu.unju.fi.util.EstadoPago).PENDIENTE}" />
                     
                     <div class="mb-3">
                         <label for="customer" class="form-label"><i class="bi bi-person-fill me-2"></i>Cliente *</label>
@@ -56,6 +58,22 @@
                             <option value="M"><i class="bi bi-wallet2"></i> MercadoPago</option>
                         </select>
                         <div class="text-danger" th:if="${#fields.hasErrors('method')}" th:errors="*{method}"></div>
+                    </div>
+                    
+                    <!-- Estado de pago visible solo en edición, no en creación -->
+                    <div class="mb-3" th:if="${order != null && order.idOrder != null}">
+                        <label class="form-label"><i class="bi bi-cash-coin me-2"></i>Estado de Pago:</label>
+                        <span th:switch="${order.estadoPago}">
+                            <span th:case="${T(ar.edu.unju.fi.util.EstadoPago).PENDIENTE}" class="badge bg-warning text-dark">
+                                <i class="bi bi-hourglass-split me-1"></i> Pendiente
+                            </span>
+                            <span th:case="${T(ar.edu.unju.fi.util.EstadoPago).PAGADO}" class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i> Pagado
+                            </span>
+                            <span th:case="${T(ar.edu.unju.fi.util.EstadoPago).CANCELADO}" class="badge bg-danger">
+                                <i class="bi bi-x-circle me-1"></i> Cancelado
+                            </span>
+                        </span>
                     </div>
                     
                     <div class="mb-3">

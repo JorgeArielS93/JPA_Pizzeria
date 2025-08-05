@@ -20,6 +20,7 @@ import ar.edu.unju.fi.dto.PizzaDTO;
 import ar.edu.unju.fi.service.ICustomerService;
 import ar.edu.unju.fi.service.IOrderService;
 import ar.edu.unju.fi.service.IPizzaService;
+import ar.edu.unju.fi.util.EstadoPago;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -37,15 +38,31 @@ public class OrderController {
 	private IPizzaService pizzaService;
 	
     /**
-     * Muestra el listado de pedidos
+     * Muestra el listado de pedidos con opción de filtrado
      * Accesible para ADMIN y OPERADOR
+     * @param searchTerm Término de búsqueda (opcional)
+     * @param field Campo por el que filtrar (opcional, por defecto "all")
+     * @param model El modelo para pasar datos a la vista
+     * @return La vista de lista de pedidos
      */
 	@PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
 	@GetMapping("/lista")
-	public String getListadoPedidosPage(Model model) {
-		model.addAttribute("pedidos", orderService.getAllOrders());
-		log.info("INFO - Mostrando listado de pedidos en /orders/lista");
-		return "lists/listaPedidos";
+	public String getListadoPedidosPage(
+	        @RequestParam(name = "searchTerm", required = false) String searchTerm,
+	        @RequestParam(name = "field", required = false, defaultValue = "all") String field,
+	        Model model) {
+	    
+	    if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+	        log.info("INFO - Filtrando pedidos por campo '{}' con término '{}'", field, searchTerm);
+	        model.addAttribute("pedidos", orderService.filterOrders(searchTerm, field));
+	        model.addAttribute("searchTerm", searchTerm);
+	        model.addAttribute("field", field);
+	    } else {
+	        log.info("INFO - Mostrando listado completo de pedidos en /orders/lista");
+	        model.addAttribute("pedidos", orderService.getAllOrders());
+	    }
+	    
+	    return "lists/listaPedidos";
 	}
 	
     /**
@@ -280,4 +297,50 @@ public class OrderController {
 		log.info("INFO - Orden eliminada con ID: {}", id);
 		return "redirect:/orders/lista";
 	}
+	
+	/**
+     * Procesa el pago de una orden
+     * Cambia el estado de pago de una orden a PAGADO
+     * Accesible para ADMIN y OPERADOR
+     * @param idOrder ID de la orden a pagar
+     * @param redirectAttributes Para agregar mensajes flash
+     * @return Redirección a la lista de pedidos
+     */
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
+    @GetMapping("/pagar/{idOrder}")
+    public String procesarPago(@PathVariable Integer idOrder, RedirectAttributes redirectAttributes) {
+        log.info("INFO - Procesando pago para la orden con ID: {}", idOrder);
+        
+        // Obtener la orden actual
+        OrderDTO order = orderService.getOrderById(idOrder);
+        
+        if (order == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "La orden #" + idOrder + " no existe");
+            return "redirect:/orders/lista";
+        }
+        
+        // Verificar que la orden esté en estado PENDIENTE
+        if (order.getEstadoPago() != EstadoPago.PENDIENTE) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "La orden #" + idOrder + " no se puede pagar porque no está en estado PENDIENTE");
+            return "redirect:/orders/lista";
+        }
+        
+        try {
+            // Actualizar el estado de pago a PAGADO
+            orderService.actualizarEstadoPago(idOrder, EstadoPago.PAGADO);
+            
+            // Mensaje de éxito
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "Pago procesado exitosamente para la orden #" + idOrder);
+                
+            log.info("INFO - Pago confirmado para la orden {}", idOrder);
+        } catch (Exception e) {
+            log.error("ERROR al procesar el pago: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "Error al procesar el pago: " + e.getMessage());
+        }
+        
+        return "redirect:/orders/lista";
+    }
 }

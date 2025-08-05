@@ -3,11 +3,11 @@ package ar.edu.unju.fi.service;
 import java.time.LocalDate;
 import java.util.List;
 
-import ar.edu.unju.fi.controller.AdminController.ChartDataPoint;
-import ar.edu.unju.fi.controller.AdminController.CustomerActivityData;
-import ar.edu.unju.fi.controller.AdminController.PaymentMethodData;
-import ar.edu.unju.fi.controller.AdminController.PizzaSalesData;
+import ar.edu.unju.fi.dto.ChartDataPointDTO;
+import ar.edu.unju.fi.dto.CustomerActivityDataDTO;
 import ar.edu.unju.fi.dto.OrderDTO;
+import ar.edu.unju.fi.dto.PaymentMethodDataDTO;
+import ar.edu.unju.fi.dto.PizzaSalesDataDTO;
 
 /**
  * Interfaz para el servicio de estadísticas y métricas del dashboard administrativo
@@ -63,7 +63,7 @@ public interface IDashboardService {
      * @param limit Límite de resultados (top N)
      * @return Lista de pizzas más vendidas
      */
-    List<PizzaSalesData> calculateTopPizzas(List<OrderDTO> orders, int limit);
+    List<PizzaSalesDataDTO> calculateTopPizzas(List<OrderDTO> orders, int limit);
     
     /**
      * Calcula los clientes más frecuentes en un período
@@ -71,7 +71,7 @@ public interface IDashboardService {
      * @param limit Límite de resultados (top N)
      * @return Lista de clientes más frecuentes
      */
-    List<CustomerActivityData> calculateTopCustomers(List<OrderDTO> orders, int limit);
+    List<CustomerActivityDataDTO> calculateTopCustomers(List<OrderDTO> orders, int limit);
     
     /**
      * Genera datos para el gráfico de ventas
@@ -79,13 +79,13 @@ public interface IDashboardService {
      * @param period Periodo (day, week, month)
      * @return Datos para el gráfico
      */
-    List<ChartDataPoint> generateSalesChartData(List<OrderDTO> orders, String period);
+    List<ChartDataPointDTO> generateSalesChartData(List<OrderDTO> orders, String period);
     
     /**
      * Genera datos para el gráfico de métodos de pago
      * @param orders Lista de órdenes
      * @return Datos para el gráfico
      */
-    List<PaymentMethodData> generatePaymentMethodsData(List<OrderDTO> orders);
+    List<PaymentMethodDataDTO> generatePaymentMethodsData(List<OrderDTO> orders);
     
 }

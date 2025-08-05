@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes; // Nueva importación para redirecciones con datos
 
 import ar.edu.unju.fi.dto.PizzaDTO;
@@ -25,17 +26,31 @@ public class PizzaController {
     @Autowired
     private IPizzaService pizzaService;
     /**
-	 * Muestra el listado de pizzas.
+	 * Muestra el listado de pizzas con filtros opcionales.
 	 * Accesible para cualquier usuario autenticado
-	 * @param model El modelo para pasar datos a la vista.
-	 * @return El nombre de la vista que muestra el listado de pizzas.
+	 * @param searchTerm Término de búsqueda (opcional)
+	 * @param field Campo por el que filtrar (opcional, por defecto "all")
+	 * @param model El modelo para pasar datos a la vista
+	 * @return El nombre de la vista que muestra el listado de pizzas
 	 */
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/lista") // Cambiado a /list para coherencia con el navbar
-    public String getListadoPizzasPage(Model model) {
-        model.addAttribute("pizzas", pizzaService.findAll());
-        log.info("INFO - Mostrando listado de pizzas en /pizzas/lista");
-        return "lists/listaPizzas"; // Devuelve el nombre de la vista
+    @GetMapping("/lista")
+    public String getListadoPizzasPage(
+            @RequestParam(name = "searchTerm", required = false) String searchTerm,
+            @RequestParam(name = "field", required = false, defaultValue = "all") String field,
+            Model model) {
+        
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+            log.info("INFO - Filtrando pizzas por campo '{}' con término '{}'", field, searchTerm);
+            model.addAttribute("pizzas", pizzaService.filterPizzas(searchTerm, field));
+            model.addAttribute("searchTerm", searchTerm);
+            model.addAttribute("field", field);
+        } else {
+            log.info("INFO - Mostrando listado completo de pizzas en /pizzas/lista");
+            model.addAttribute("pizzas", pizzaService.findAll());
+        }
+        
+        return "lists/listaPizzas";
     }
 	/**
 	 * Muestra el formulario para crear una nueva pizza.
