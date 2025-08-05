@@ -275,36 +275,39 @@
 														</tr>
 													</thead>
 													<tbody>
-														<!-- Esta sección se llenaría dinámicamente con datos del backend -->
-														<tr>
-															<th scope="row">1</th>
+														<!-- Iteramos sobre la lista de usuarios dinámicamente -->
+														<tr th:each="user, iterStat : ${allUsers}">
+															<th scope="row" th:text="${iterStat.count}">1</th>
 															<td>
-																<span class="fw-bold">admin</span>
+																<span class="fw-bold" th:text="${user.username}">admin</span>
 															</td>
-															<td>admin@pizzeria.com</td>
-															<td><span class="badge bg-danger">ADMIN</span></td>
-															<td><span class="badge bg-success">Activo</span></td>
+															<td th:text="${user.email}">admin@pizzeria.com</td>
+															<td>
+																<span class="badge bg-danger" th:if="${user.roles != null and user.roles.contains('ADMIN')}">ADMIN</span>
+																<span class="badge bg-primary" th:if="${user.roles != null and user.roles.contains('OPERADOR')}">OPERADOR</span>
+																<span class="badge bg-secondary" th:if="${user.roles != null and user.roles.contains('CLIENTE')}">CLIENTE</span>
+															</td>
+															<td>
+																<span class="badge bg-success" th:if="${user.activo}">Activo</span>
+																<span class="badge bg-danger" th:unless="${user.activo}">Inactivo</span>
+															</td>
 															<td>
 																<div class="btn-group btn-group-sm" role="group">
-																	<a href="#" class="btn btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
-																	<a href="#" class="btn btn-outline-danger" title="Desactivar"><i class="bi bi-person-x"></i></a>
+																	<a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-outline-primary" title="Editar">
+																		<i class="bi bi-pencil"></i>
+																	</a>
+																	<a th:if="${user.activo}" th:href="@{/admin/users/toggle/{id}(id=${user.id})}" class="btn btn-outline-danger" title="Desactivar">
+																		<i class="bi bi-person-x"></i>
+																	</a>
+																	<a th:unless="${user.activo}" th:href="@{/admin/users/toggle/{id}(id=${user.id})}" class="btn btn-outline-success" title="Activar">
+																		<i class="bi bi-person-check"></i>
+																	</a>
 																</div>
 															</td>
 														</tr>
-														<tr>
-															<th scope="row">2</th>
-															<td>
-																<span class="fw-bold">operador1</span>
-															</td>
-															<td>operador1@pizzeria.com</td>
-															<td><span class="badge bg-primary">OPERADOR</span></td>
-															<td><span class="badge bg-success">Activo</span></td>
-															<td>
-																<div class="btn-group btn-group-sm" role="group">
-																	<a href="#" class="btn btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
-																	<a href="#" class="btn btn-outline-danger" title="Desactivar"><i class="bi bi-person-x"></i></a>
-																</div>
-															</td>
+														<!-- Si no hay usuarios -->
+														<tr th:if="${#lists.isEmpty(allUsers)}">
+															<td colspan="6" class="text-center">No hay usuarios disponibles</td>
 														</tr>
 													</tbody>
 												</table>
@@ -334,10 +337,6 @@
 												<div class="card-body">
 													<h6 class="card-subtitle mb-2 text-muted">Acciones rápidas</h6>
 													<p class="card-text small">Gestione los usuarios del sistema, asigne roles y permisos, y controle el acceso al sistema.</p>
-													<div class="form-check form-switch">
-														<input class="form-check-input" type="checkbox" id="registroAbierto">
-														<label class="form-check-label" for="registroAbierto">Registro público abierto</label>
-													</div>
 												</div>
 											</div>
 										</div>

@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ar.edu.unju.fi.dto.OrderDTO;
+import ar.edu.unju.fi.dto.UserDTO;
 import ar.edu.unju.fi.service.IDashboardService;
 import ar.edu.unju.fi.service.IOrderService;
+import ar.edu.unju.fi.service.IUsuarioService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,6 +32,9 @@ public class AdminController {
     
     @Autowired
     private IDashboardService dashboardService;
+    
+    @Autowired
+    private IUsuarioService usuarioService;
     
     /**
      * Muestra el panel de administración con estadísticas y métricas
@@ -62,77 +67,13 @@ public class AdminController {
         model.addAttribute("salesData", dashboardService.generateSalesChartData(allOrders, period));
         model.addAttribute("paymentMethods", dashboardService.generatePaymentMethodsData(filteredOrders));
         
-        // Agregar el período actual al modelo para marcar el botón correcto
+        // Obtener la lista de todos los usuarios para la sección de gestión de usuarios
+        List<UserDTO> allUsers = usuarioService.obtenerTodosLosUsuariosDTO();
+        model.addAttribute("allUsers", allUsers);
+        
+        // Agregar el período currentPeriod al modelo para marcar el botón correcto
         model.addAttribute("currentPeriod", period);
         
         return "admin/dashboard";
-    }
-    
-    /**
-     * Clase interna para datos de ventas de pizzas
-     */
-    public static class PizzaSalesData {
-        public int id;
-        public String name;
-        public int quantity;
-        public double revenue;
-        
-        // Getters para Thymeleaf
-        public int getId() { return id; }
-        public String getName() { return name; }
-        public int getQuantity() { return quantity; }
-        public double getRevenue() { return revenue; }
-    }
-    
-    /**
-     * Clase interna para datos de actividad de clientes
-     */
-    public static class CustomerActivityData {
-        public int id;
-        public String name;
-        public String email;
-        public int orderCount;
-        public double totalSpent;
-        
-        // Getters para Thymeleaf
-        public int getId() { return id; }
-        public String getName() { return name; }
-        public String getEmail() { return email; }
-        public int getOrderCount() { return orderCount; }
-        public double getTotalSpent() { return totalSpent; }
-    }
-    
-    /**
-     * Clase interna para datos de gráficos
-     */
-    public static class ChartDataPoint {
-        private String label;
-        private double value;
-        
-        public ChartDataPoint(String label, double value) {
-            this.label = label;
-            this.value = value;
-        }
-        
-        // Getters para Thymeleaf y serialización JSON
-        public String getLabel() { return label; }
-        public double getValue() { return value; }
-    }
-    
-    /**
-     * Clase interna para datos de métodos de pago
-     */
-    public static class PaymentMethodData {
-        private String name;
-        private int count;
-        
-        public PaymentMethodData(String name, int count) {
-            this.name = name;
-            this.count = count;
-        }
-        
-        // Getters para Thymeleaf y serialización JSON
-        public String getName() { return name; }
-        public int getCount() { return count; }
     }
 }

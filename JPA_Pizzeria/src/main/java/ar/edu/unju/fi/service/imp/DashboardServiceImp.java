@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import ar.edu.unju.fi.controller.AdminController.ChartDataPoint;
-import ar.edu.unju.fi.controller.AdminController.CustomerActivityData;
-import ar.edu.unju.fi.controller.AdminController.PaymentMethodData;
-import ar.edu.unju.fi.controller.AdminController.PizzaSalesData;
+import ar.edu.unju.fi.dto.ChartDataPointDTO;
+import ar.edu.unju.fi.dto.CustomerActivityDataDTO;
 import ar.edu.unju.fi.dto.CustomerDTO;
 import ar.edu.unju.fi.dto.OrderDTO;
+import ar.edu.unju.fi.dto.PaymentMethodDataDTO;
 import ar.edu.unju.fi.dto.PizzaDTO;
+import ar.edu.unju.fi.dto.PizzaSalesDataDTO;
 import ar.edu.unju.fi.service.IDashboardService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -79,9 +79,9 @@ public class DashboardServiceImp implements IDashboardService {
     }
 
     @Override
-    public List<PizzaSalesData> calculateTopPizzas(List<OrderDTO> orders, int limit) {
+    public List<PizzaSalesDataDTO> calculateTopPizzas(List<OrderDTO> orders, int limit) {
         // Mapa para rastrear ventas por pizza
-        Map<Integer, PizzaSalesData> pizzaSalesMap = new HashMap<>();
+        Map<Integer, PizzaSalesDataDTO> pizzaSalesMap = new HashMap<>();
         
         // Procesar todos los pedidos y sus ítems
         orders.forEach(order -> {
@@ -94,15 +94,15 @@ public class DashboardServiceImp implements IDashboardService {
                         
                         // Actualizar o crear datos de ventas para esta pizza
                         if (pizzaSalesMap.containsKey(pizzaId)) {
-                            PizzaSalesData data = pizzaSalesMap.get(pizzaId);
-                            data.quantity += item.getQuantity();
-                            data.revenue += itemRevenue;
+                            PizzaSalesDataDTO data = pizzaSalesMap.get(pizzaId);
+                            data.setQuantity(data.getQuantity() + item.getQuantity());
+                            data.setRevenue(data.getRevenue() + itemRevenue);
                         } else {
-                            PizzaSalesData data = new PizzaSalesData();
-                            data.id = pizzaId;
-                            data.name = pizza.getName();
-                            data.quantity = item.getQuantity();
-                            data.revenue = itemRevenue;
+                            PizzaSalesDataDTO data = new PizzaSalesDataDTO();
+                            data.setId(pizzaId);
+                            data.setName(pizza.getName());
+                            data.setQuantity(item.getQuantity());
+                            data.setRevenue(itemRevenue);
                             pizzaSalesMap.put(pizzaId, data);
                         }
                     }
@@ -112,15 +112,15 @@ public class DashboardServiceImp implements IDashboardService {
         
         // Convertir a lista y ordenar por cantidad vendida (descendente)
         return pizzaSalesMap.values().stream()
-                .sorted((p1, p2) -> Integer.compare(p2.quantity, p1.quantity))
+                .sorted((p1, p2) -> Integer.compare(p2.getQuantity(), p1.getQuantity()))
                 .limit(limit)  // Limitar a las N pizzas más vendidas
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<CustomerActivityData> calculateTopCustomers(List<OrderDTO> orders, int limit) {
+    public List<CustomerActivityDataDTO> calculateTopCustomers(List<OrderDTO> orders, int limit) {
         // Mapa para rastrear actividad por cliente
-        Map<Integer, CustomerActivityData> customerActivityMap = new HashMap<>();
+        Map<Integer, CustomerActivityDataDTO> customerActivityMap = new HashMap<>();
         
         // Procesar todos los pedidos
         orders.forEach(order -> {
@@ -131,16 +131,16 @@ public class DashboardServiceImp implements IDashboardService {
                 
                 // Actualizar o crear datos de actividad para este cliente
                 if (customerActivityMap.containsKey(customerId)) {
-                    CustomerActivityData data = customerActivityMap.get(customerId);
-                    data.orderCount++;
-                    data.totalSpent += orderTotal;
+                    CustomerActivityDataDTO data = customerActivityMap.get(customerId);
+                    data.setOrderCount(data.getOrderCount() + 1);
+                    data.setTotalSpent(data.getTotalSpent() + orderTotal);
                 } else {
-                    CustomerActivityData data = new CustomerActivityData();
-                    data.id = customerId;
-                    data.name = customer.getName();
-                    data.email = customer.getEmail();
-                    data.orderCount = 1;
-                    data.totalSpent = orderTotal;
+                    CustomerActivityDataDTO data = new CustomerActivityDataDTO();
+                    data.setId(customerId);
+                    data.setName(customer.getName());
+                    data.setEmail(customer.getEmail());
+                    data.setOrderCount(1);
+                    data.setTotalSpent(orderTotal);
                     customerActivityMap.put(customerId, data);
                 }
             }
@@ -148,14 +148,14 @@ public class DashboardServiceImp implements IDashboardService {
         
         // Convertir a lista y ordenar por número de pedidos (descendente)
         return customerActivityMap.values().stream()
-                .sorted((c1, c2) -> Integer.compare(c2.orderCount, c1.orderCount))
+                .sorted((c1, c2) -> Integer.compare(c2.getOrderCount(), c1.getOrderCount()))
                 .limit(limit)  // Limitar a los N clientes más frecuentes
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ChartDataPoint> generateSalesChartData(List<OrderDTO> orders, String period) {
-        List<ChartDataPoint> salesData = new ArrayList<>();
+    public List<ChartDataPointDTO> generateSalesChartData(List<OrderDTO> orders, String period) {
+        List<ChartDataPointDTO> salesData = new ArrayList<>();
         DateTimeFormatter formatter;
         
         // Configurar según el período
@@ -175,7 +175,7 @@ public class DashboardServiceImp implements IDashboardService {
                     // Aquí usamos datos aleatorios para simulación
                     double weeklySales = Math.random() * 5000 + 1000;
                     
-                    salesData.add(new ChartDataPoint(label, weeklySales));
+                    salesData.add(new ChartDataPointDTO(label, weeklySales));
                 }
                 break;
                 
@@ -196,7 +196,7 @@ public class DashboardServiceImp implements IDashboardService {
                             .mapToDouble(OrderDTO::getTotal)
                             .sum();
                     
-                    salesData.add(new ChartDataPoint(label, dailySales));
+                    salesData.add(new ChartDataPointDTO(label, dailySales));
                 }
                 break;
                 
@@ -213,7 +213,7 @@ public class DashboardServiceImp implements IDashboardService {
                     // Aquí usamos datos aleatorios para simulación
                     double hourlySales = Math.random() * 1000;
                     
-                    salesData.add(new ChartDataPoint(hourLabel, hourlySales));
+                    salesData.add(new ChartDataPointDTO(hourLabel, hourlySales));
                 }
                 break;
         }
@@ -222,7 +222,7 @@ public class DashboardServiceImp implements IDashboardService {
     }
 
     @Override
-    public List<PaymentMethodData> generatePaymentMethodsData(List<OrderDTO> orders) {
+    public List<PaymentMethodDataDTO> generatePaymentMethodsData(List<OrderDTO> orders) {
         // Mapa para contar órdenes por método de pago
         Map<String, Integer> methodCounts = new HashMap<>();
         methodCounts.put("Efectivo", 0);
@@ -256,8 +256,7 @@ public class DashboardServiceImp implements IDashboardService {
         
         // Convertir a lista de objetos para el gráfico
         return methodCounts.entrySet().stream()
-                .map(entry -> new PaymentMethodData(entry.getKey(), entry.getValue()))
+                .map(entry -> new PaymentMethodDataDTO(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
-
 }

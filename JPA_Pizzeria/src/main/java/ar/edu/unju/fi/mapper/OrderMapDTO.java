@@ -18,6 +18,7 @@ public interface OrderMapDTO {
     @Mapping(source = "date", target = "date")
     @Mapping(source = "total", target = "total")
     @Mapping(source = "method", target = "method")
+    @Mapping(source = "estadoPago", target = "estadoPago")
     @Mapping(source = "additionalNotes", target = "additionalNotes")
     @Mapping(source = "items", target = "items") 
     OrderDTO toDto(OrderEntity orderEntity);

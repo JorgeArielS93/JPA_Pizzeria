@@ -3,9 +3,12 @@ package ar.edu.unju.fi.entity;
 import java.time.LocalDate;
 import java.util.List;
 
+import ar.edu.unju.fi.util.EstadoPago;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -57,6 +60,10 @@ public class OrderEntity {
 	
 	@Column(nullable = false, columnDefinition = "CHAR(1)") // Mapea a una columna no nula, tipo CHAR de 1 carácter (ej. 'E' para efectivo, 'T' para tarjeta).
 	private String method; // Método de pago.
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "estado_pago", nullable = false, length = 20)
+	private EstadoPago estadoPago = EstadoPago.PENDIENTE; // Estado de pago de la orden con valor por defecto PENDIENTE
 	
 	@Column(name = "additional_notes", length = 200) // Mapea a la columna "additional_notes" con longitud máxima de 200 caracteres.
 	private String additionalNotes; // Notas adicionales para la orden.

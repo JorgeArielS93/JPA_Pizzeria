@@ -3,6 +3,7 @@ package ar.edu.unju.fi.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import ar.edu.unju.fi.util.EstadoPago;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -31,6 +32,9 @@ public class OrderDTO {
 
     @NotBlank(message = "El método de pago no puede estar vacío")
     private String method;
+    
+    @NotNull(message = "El estado de pago no puede ser nulo")
+    private EstadoPago estadoPago = EstadoPago.PENDIENTE;
 
     @Size(max = 200, message = "Las notas adicionales no pueden superar los 200 caracteres")
     private String additionalNotes;
