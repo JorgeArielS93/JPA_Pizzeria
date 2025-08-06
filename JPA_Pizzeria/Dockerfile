@@ -37,15 +37,16 @@ WORKDIR /app
 # Esto hace que la imagen final sea mucho más pequeña ya que no incluye el código fuente ni las herramientas de compilación
 COPY --from=build /app/target/JPA_Pizzeria-0.0.1-SNAPSHOT.jar /app/JPA_Pizzeria.jar
 
-# Exponemos el puerto 8080 que utilizará Spring Boot
-# Esto documenta qué puertos necesita la aplicación pero no publica automáticamente el puerto
-# Para publicar el puerto al ejecutar el contenedor, se debe usar el parámetro -p (ejemplo: docker run -p 8080:8080)
-EXPOSE 8080
-
-# Definimos el comando que se ejecutará cuando el contenedor se inicie
-# El parámetro -jar indica que se ejecutará un archivo JAR
-ENTRYPOINT ["java", "-jar", "/app/JPA_Pizzeria.jar"]
-
-# Configuramos la zona horaria para Argentina/Jujuy
-# Esto es importante para que las fechas y horas se muestren correctamente según la región
+# Establecer variables de entorno con valores predeterminados que Railway puede sobrescribir
+ENV SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/pizzeria
+ENV SPRING_DATASOURCE_USERNAME=user
+ENV SPRING_DATASOURCE_PASSWORD=password
+ENV SPRING_JPA_HIBERNATE_DDL_AUTO=update
 ENV TZ=America/Argentina/Jujuy
+ENV PORT=8080
+
+# Railway asigna el puerto dinámicamente mediante la variable PORT
+EXPOSE ${PORT}
+
+# Comando para iniciar la aplicación usando la variable PORT
+ENTRYPOINT ["sh", "-c", "java -jar /app/JPA_Pizzeria.jar --server.port=${PORT}"]
