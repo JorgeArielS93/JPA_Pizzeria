@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # Servicio para la aplicación Spring Boot
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jpa-pizzeria-app
+    ports:
+      - "${APP_PORT}:8080"
+    environment:
+      # Configuración de Spring Boot para la base de datos
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      # Actualizar esquema automáticamente (para desarrollo)
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=${SPRING_JPA_HIBERNATE_DDL_AUTO}
+      # Zona horaria
+      - TZ=${TIME_ZONE}
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - pizzeria-network
+
+  # Servicio para la base de datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: jpa-pizzeria-db
+    ports:
+      - "${DB_PORT}:3306"
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=${TIME_ZONE}
+    volumes:
+      - pizzeria-db-data:/var/lib/mysql
+    restart: always
+    networks:
+      - pizzeria-network
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+# Volúmenes para persistencia de datos
+volumes:
+  pizzeria-db-data:
+    name: pizzeria-mysql-data
+
+# Redes para comunicación entre contenedores
+networks:
+  pizzeria-network:
+    name: pizzeria-network
