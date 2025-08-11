@@ -165,16 +165,13 @@
 		</plugins>
 		
 		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-			
-			 <resource>
+        <resource>
             <directory>src/main/resources</directory>
             <filtering>true</filtering>
             <excludes>
                 <exclude>static/bootstrap-icons-1.13.1/fonts/*.woff2</exclude>
+                <exclude>static/bootstrap-icons-1.13.1/fonts/*.ttf</exclude>
+                <exclude>static/bootstrap-icons-1.13.1/fonts/*.woff</exclude>
             </excludes>
         </resource>
         <resource>
@@ -182,10 +179,11 @@
             <filtering>false</filtering>
             <includes>
                 <include>static/bootstrap-icons-1.13.1/fonts/*.woff2</include>
+                <include>static/bootstrap-icons-1.13.1/fonts/*.ttf</include>
+                <include>static/bootstrap-icons-1.13.1/fonts/*.woff</include>
             </includes>
         </resource>
-			
-		</resources>
+    </resources>
 	</build>
 
 </project>
