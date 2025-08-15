@@ -106,7 +106,7 @@
                     <div class="mb-3">
                         <label class="form-label"><i class="bi bi-cart4 me-2"></i>Ítems del Pedido *</label>
                         <div class="text-danger" th:if="${#fields.hasErrors('items')}" th:errors="*{items}"></div>
-                        <div th:if="${order != null && order.items != null && !order.items.isEmpty()}">
+                        <div th:if="${order != null && order.items != null && !order.items.isEmpty()}" class="table-responsive">
                             <table class="table table-bordered align-middle">
                                 <thead class="table-light">
                                     <tr>
